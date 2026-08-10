@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '9'
+const SURUM = '10'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -196,12 +196,10 @@ async function arAc(liste, indeks) {
   $('#ar').classList.remove('gizli')
   ar.tazeleBoyut()
 
-  // iOS, hareket sensörü iznini YALNIZCA kullanıcı hareketiyle aynı çağrı
-  // yığınında ister. Önce kamerayı beklersek dokunma bağlamı kaybolur ve izin
-  // sessizce reddedilir — zemin açısı varsayılanda kalır, ürün odaya oturmaz.
-  // Bu yüzden izin isteği her şeyden önce, beklemeden başlatılır.
-  const yonelimSozu = ar.yonelimiBagla()
-
+  // Tek dokunuşta TEK izin: kamera. iOS, bir izin istemi ekrandayken
+  // gelen ikinci istemi (hareket sensörü) sessizce reddediyor — ikisini
+  // birden istemek kameranın hiç açılmamasına yol açıyordu. Sensör izni,
+  // kendi dokunuşu olan ⌖ Sabitle butonunda isteniyor.
   await kamerayiAc()
   arUrunSeridiCiz()
   await arUrunuYukle()
@@ -215,7 +213,6 @@ async function arAc(liste, indeks) {
       ? '⬚ Odaya Sabitle — kamera doğrudan açılır'
       : 'Zemine tam oturması için: ⬚ Odaya Sabitle'
   }
-  await yonelimSozu
   sabitDugmesiTazele()
 
   const ipucu = $('#ar-ipucu')
@@ -247,13 +244,18 @@ async function kamerayiAc() {
     $('#oda-fonu').classList.remove('acik')
     $('#sahne-secici').classList.add('gizli')
     durum.kameraVar = true
-  } catch {
+  } catch (hata) {
     durum.kameraVar = false
     video.classList.remove('acik')
     $('#oda-fonu').classList.add('acik')
     sahneSeciciCiz()
     sahneUygula(durum.sahneIndeks)
-    $('#ar-ipucu').textContent = 'Kamera bulunamadı — örnek oda sahnesi kullanılıyor'
+    // İzin daha önce reddedildiyse iOS bir daha SORMAZ — kullanıcıya nereden
+    // açacağını söylemezsek "kamera bozuk" sanır.
+    $('#ar-ipucu').textContent =
+      hata?.name === 'NotAllowedError'
+        ? 'Kamera izni kapalı — adres çubuğundaki AA menüsü → Web Sitesi Ayarları → Kamera → İzin Ver'
+        : 'Kamera bulunamadı — örnek oda sahnesi kullanılıyor'
   }
 }
 
