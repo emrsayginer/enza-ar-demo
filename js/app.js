@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '12'
+const SURUM = '13'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
