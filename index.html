@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Enza Home · Odanda Dene (AR Demo)</title>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div class="masaustu-not">
+  <strong>Enza Home · “Odanda Dene” AR demosu</strong>
+  <span>Gerçek deneyim için telefonun tarayıcısından açın. Kamera bulunamazsa örnek oda sahneleri kullanılır.</span>
+</div>
+
+<div id="telefon">
+  <div class="demo-rozeti">DEMO</div>
+  <div id="tarayici-uyari" class="tarayici-uyari gizli">
+    <b>WhatsApp içinden açtınız</b> — kamera ve AR burada kısıtlı.
+    Sağ üstteki <b>⋯</b> veya paylaş menüsünden <b>“Safari’de Aç”</b> deyin.
+    <button id="uyari-kapat" aria-label="Kapat">✕</button>
+  </div>
+  <!-- ===================== UYGULAMA VİTRİNİ ===================== -->
+  <div id="vitrin" class="ekran">
+    <header class="ust-bar">
+      <button class="ikon" aria-label="Menü">☰</button>
+      <div class="logo">ENZA<span>HOME</span></div>
+      <div class="ust-sag">
+        <button class="ikon" aria-label="Ara">⌕</button>
+        <button class="ikon" aria-label="Sepet">⌂</button>
+      </div>
+    </header>
+
+    <div class="kaydir">
+      <!-- Banner -->
+      <section id="banner" class="banner">
+        <div id="banner-slaytlar" class="banner-slaytlar"></div>
+        <div id="banner-noktalar" class="banner-noktalar"></div>
+      </section>
+
+      <section class="bolum">
+        <div class="bolum-baslik">
+          <h2>Odanda Dene</h2>
+          <span class="rozet-ar">AR</span>
+        </div>
+        <p class="bolum-alt">Ürünü seç, kamerayı aç, kendi evinde gerçek ölçüsüyle gör.</p>
+        <div id="cipler" class="cipler"></div>
+        <div id="izgara" class="izgara"></div>
+        <p id="eleme-notu" class="eleme-notu"></p>
+      </section>
+
+      <section class="bolum">
+        <div class="bolum-baslik"><h2>Gerçek 3D Model</h2><span class="rozet-ar alt">AŞAMA 2</span></div>
+        <p class="bolum-alt">3D modeli hazırlanmış ürünlerde tam AR: 360° döndürme, gerçek zemin takibi.</p>
+        <button id="uc-boyut-ac" class="uc-boyut-kart">
+          <div class="uc-boyut-gorsel">◈</div>
+          <div>
+            <strong>Örnek Koltuk · 3D</strong>
+            <span>ARKit / ARCore ile odana yerleştir</span>
+          </div>
+          <span class="ok">›</span>
+        </button>
+      </section>
+
+      <footer class="dip-not">
+        Demo — ürün görselleri, fiyatları ve ölçüleri enzahome.com.tr üzerinden alınmıştır.
+      </footer>
+    </div>
+  </div>
+
+  <!-- ===================== AR EKRANI ===================== -->
+  <div id="ar" class="ekran gizli">
+    <video id="kamera" playsinline muted autoplay></video>
+    <img id="oda-fonu" alt="">
+    <canvas id="sahne"></canvas>
+
+    <div class="ar-ust">
+      <button id="ar-kapat" class="yuvarlak" aria-label="Kapat">✕</button>
+      <div id="ar-baslik" class="ar-baslik"></div>
+      <button id="ar-bilgi" class="yuvarlak" aria-label="Bilgi">i</button>
+    </div>
+
+    <div id="ar-ipucu" class="ar-ipucu">Ürünü sürükleyerek taşı · iki parmakla yaklaştır</div>
+
+    <div id="sahne-secici" class="sahne-secici gizli"></div>
+
+    <!-- Konum takipli gerçek AR: ürün odada kalır, etrafında dolaşılabilir -->
+    <!-- loading="eager": element ekranda 1px olduğu için tembel yükleme
+         devreye girerse model hiç yüklenmez ve AR açılmaz.
+         ar-scale="fixed": ürün gerçek ölçüsünde kalır, parmakla büyütülemez —
+         "sığar mı" sorusunun cevabı ancak böyle güvenilir olur. -->
+    <model-viewer id="mv-canli" class="mv-gizli" loading="eager"
+                  ar ar-modes="scene-viewer webxr" ar-scale="fixed"
+                  ar-placement="floor"></model-viewer>
+
+    <div class="ar-alt">
+      <div id="ar-urunler" class="ar-urunler"></div>
+
+      <div id="kalibrasyon" class="kalibrasyon gizli">
+        <label>
+          <span>Kamera yüksekliği</span><b id="kal-yukseklik-deger">1.35 m</b>
+          <input id="kal-yukseklik" type="range" min="70" max="190" step="5" value="135">
+        </label>
+        <label>
+          <span>Görüş açısı</span><b id="kal-fov-deger">62°</b>
+          <input id="kal-fov" type="range" min="40" max="90" step="1" value="62">
+        </label>
+        <p id="kal-sensor" class="kal-sensor">Sensör durumu okunuyor…</p>
+        <p>Ürün odaya doğru oturmuyorsa bu iki değeri oynatın. Telefon
+           modeline göre kameranın görüş açısı değişir.</p>
+      </div>
+
+      <div class="ar-butonlar">
+        <button id="btn-olcu" class="ar-btn"><span>⇹</span>Ölçü</button>
+        <button id="btn-cevir" class="ar-btn"><span>⇄</span>Çevir</button>
+        <button id="btn-sabit" class="ar-btn"><span>⌖</span>Sabitle</button>
+        <button id="btn-gercek-ar" class="ar-btn gizli"><span>⬚</span>Odaya Sabitle</button>
+        <button id="btn-kal" class="ar-btn"><span>⚙</span>Ayar</button>
+        <button id="btn-foto" class="ar-btn"><span>◉</span>Fotoğraf</button>
+      </div>
+
+      <div class="ar-sepet">
+        <div class="ar-fiyat">
+          <strong id="ar-fiyat-tutar">—</strong>
+          <span id="ar-fiyat-olcu">—</span>
+        </div>
+        <button class="sepet-btn">Sepete Ekle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 3D / GERÇEK AR EKRANI ===================== -->
+  <div id="uc-boyut" class="ekran gizli">
+    <div class="ar-ust">
+      <button id="uc-boyut-kapat" class="yuvarlak" aria-label="Kapat">✕</button>
+      <div class="ar-baslik"><strong>Örnek Koltuk</strong><span>Gerçek 3D model · tam AR</span></div>
+      <span class="yuvarlak saydam"></span>
+    </div>
+    <model-viewer
+      id="mv"
+      src="assets/models/chair.glb"
+      alt="Örnek 3D koltuk modeli"
+      ar
+      ar-modes="webxr scene-viewer quick-look"
+      camera-controls
+      touch-action="pan-y"
+      shadow-intensity="1"
+      exposure="1.1">
+      <button slot="ar-button" class="mv-ar-btn">Odana Yerleştir</button>
+    </model-viewer>
+    <div class="ar-tani">
+      AR sekmesi bizim modellerde soluk kalıyorsa şu iki testi yapın:
+      <a rel="ar" href="assets/models/astronaut.usdz">
+        <img alt="">1) Apple örnek modeliyle dene
+      </a>
+      <span>— bunda da soluksa sorun telefonda: Ayarlar → Ekran Süresi →
+      İçerik ve Gizlilik → Kamera iznini kontrol edin.</span>
+    </div>
+    <div class="uc-boyut-not">
+      Bu ekran, 3D modeli hazır bir ürünün nasıl çalışacağını gösterir: parmakla 360° döndürme,
+      “Odana Yerleştir” ile ARCore üzerinden gerçek zemin takibi.
+      Modelin kendisi örnek amaçlı, Enza ürünü değildir.
+      <br><br>
+      Android’de kameraya yerleştirme çalışır. iPhone’da aynı şeyin çalışması için
+      modelin bir de USDZ sürümü gerekir — 3D üretim akışının standart çıktısıdır,
+      bu demoda üretilmedi.
+    </div>
+  </div>
+
+  <!-- ===================== BİLGİ SAYFASI ===================== -->
+  <div id="bilgi" class="ekran gizli bilgi">
+    <div class="ar-ust">
+      <button id="bilgi-kapat" class="yuvarlak">✕</button>
+      <div class="ar-baslik"><strong>Demoda ne gerçek?</strong></div>
+      <span class="yuvarlak saydam"></span>
+    </div>
+    <div class="bilgi-icerik">
+      <h3>Gerçek olan</h3>
+      <ul>
+        <li><b>Ürünler</b> — enzahome.com.tr kataloğundan çekildi: isim, fiyat, görsel.</li>
+        <li><b>Ölçüler</b> — sitedeki mm cinsinden gerçek en/derinlik/yükseklik verisi.</li>
+        <li><b>Ölçek</b> — ürün, delik iğne kamera modeliyle gerçek boyutunda çiziliyor. Bir koltuk uzaklaştıkça doğru oranda küçülüyor.</li>
+        <li><b>Kamera</b> — cihazın arka kamerası, görüntü telefondan çıkmıyor.</li>
+        <li><b>Sabitleme</b> — cihaz yönelim sensörüyle ürün odada sabit kalır; telefonu çevirdiğinde yerinde durur.</li>
+        <li><b>Odaya Sabitle</b> — destekleyen cihazlarda (Android/ARCore) ürün gerçek konum takibiyle odaya çakılır: yürüyerek etrafında dolaşabilirsiniz. Katalog fotoğrafı çalışma anında gerçek ölçekli bir 3D düzleme çevrilir.</li>
+        <li><b>Arka plan silme</b> — beyaz fonlu katalog fotoğrafı tarayıcıda otomatik kesiliyor, elle hazırlık yok.</li>
+      </ul>
+      <h3>Bu demoda olmayan</h3>
+      <ul>
+        <li><b>360° döndürme</b> — ürünün yan/arka görünümü 3D model ister. Katalog fotoğrafı tek açıdır.</li>
+        <li><b>Gerçek zemin algılama</b> — burada zemin, kamera yüksekliği varsayımıyla hesaplanıyor. ARKit/ARCore gerçek düzlemi tarar.</li>
+        <li><b>iPhone'da odada yürüme takibi</b> — “Odaya Sabitle” ARCore ister, iOS Safari WebXR desteklemez. iPhone'da konum takibi için USDZ ve uygulama içi ARKit gerekir.</li>
+        <li><b>Gerçek hacim</b> — “Odaya Sabitle” modunda ürün, doğru ölçüde bir düzlem olarak yerleşir; konumu ve boyu gerçektir, kalınlığı değildir.</li>
+        <li><b>Nesne arkasına gizlenme</b> — ürün her zaman önde görünür.</li>
+      </ul>
+      <p class="bilgi-sonuc">
+        Üçünün de cevabı aynı: <b>ürün başına bir 3D model.</b> Ölçü verisi ve fotoğraf altyapısı
+        Enza’da zaten hazır olduğu için, eksik olan tek girdi bu.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="assets/models/model-viewer.min.js" type="module"></script>
+<script src="js/app.js" type="module"></script>
+</body>
+</html>

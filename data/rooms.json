@@ -1,0 +1,46 @@
+{
+  "sahneler": [
+    {
+      "dosya": "assets/rooms/1432965-1.jpg",
+      "urunSku": "1432965",
+      "urunAd": "ASTERA",
+      "kategori": "Koltuk",
+      "boyutKb": 221
+    },
+    {
+      "dosya": "assets/rooms/1657603-2.jpg",
+      "urunSku": "1657603",
+      "urunAd": "TERRA",
+      "kategori": "Koltuk",
+      "boyutKb": 164
+    },
+    {
+      "dosya": "assets/rooms/1642966-3.jpg",
+      "urunSku": "1642966",
+      "urunAd": "TERRA",
+      "kategori": "Koltuk",
+      "boyutKb": 188
+    },
+    {
+      "dosya": "assets/rooms/1504188-4.jpg",
+      "urunSku": "1504188",
+      "urunAd": "SWAN",
+      "kategori": "Koltuk",
+      "boyutKb": 184
+    },
+    {
+      "dosya": "assets/rooms/1555755-5.jpg",
+      "urunSku": "1555755",
+      "urunAd": "BERTA",
+      "kategori": "Koltuk",
+      "boyutKb": 258
+    },
+    {
+      "dosya": "assets/rooms/1578040-6.jpg",
+      "urunSku": "1578040",
+      "urunAd": "CANTON",
+      "kategori": "Koltuk",
+      "boyutKb": 312
+    }
+  ]
+}
