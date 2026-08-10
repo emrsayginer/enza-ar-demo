@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Enza Home · Odanda Dene (AR Demo)</title>
-<link rel="stylesheet" href="css/app.css?s=8">
+<link rel="stylesheet" href="css/app.css?s=9">
 </head>
 <body>
 
@@ -114,12 +114,15 @@
         <button id="btn-olcu" class="ar-btn"><span>⇹</span>Ölçü</button>
         <button id="btn-cevir" class="ar-btn"><span>⇄</span>Çevir</button>
         <button id="btn-sabit" class="ar-btn"><span>⌖</span>Sabitle</button>
-        <!-- iOS'ta DÜZ bir bağlantı: dokununca Safari USDZ'yi tam sayfa
-             görüntüleyicide açar (adres çubuğuna yazmakla aynı, kanıtlanmış
-             yol) — onay promptu çıkmaz, sağ üstteki AR küpü tam yetkilidir.
-             rel=ar BİLEREK yok: Safari rel=ar linkinde tek <img> çocuğu şartı
-             arar; ikon+yazı yüzünden linki "normal" sayıp AR'ı kilitliyordu. -->
-        <a id="btn-gercek-ar" class="ar-btn gizli"><span>⬚</span>Odaya Sabitle</a>
+        <!-- Safari'nin AR linki kuralı katıdır: <a rel="ar"> içinde YALNIZCA
+             tek bir <img> olabilir. Kurala uyulursa dokunuş Quick Look'u
+             DOĞRUDAN kamera modunda açar — görüntüleyici, sekme, küp yok.
+             Bu yüzden etiket linkin dışında (pointer-events:none) durur,
+             link ise tüm butonu kaplayan görünmez bir katmandır. -->
+        <div id="btn-gercek-ar-kap" class="ar-btn gizli">
+          <span class="ar-btn-etiket"><span>⬚</span>Odaya Sabitle</span>
+          <a id="btn-gercek-ar" class="ar-kaplama"><img id="btn-gercek-ar-img" alt=""></a>
+        </div>
         <button id="btn-kal" class="ar-btn"><span>⚙</span>Ayar</button>
         <button id="btn-foto" class="ar-btn"><span>◉</span>Fotoğraf</button>
       </div>
@@ -207,6 +210,6 @@
 </div>
 
 <script src="assets/models/model-viewer.min.js" type="module"></script>
-<script src="js/app.js?s=8" type="module"></script>
+<script src="js/app.js?s=9" type="module"></script>
 </body>
 </html>

@@ -7,7 +7,23 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '8'
+const SURUM = '9'
+
+// Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
+// kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
+const AR_ROZET =
+  'data:image/svg+xml;charset=utf-8,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="44" height="24">' +
+    '<rect width="44" height="24" rx="5" fill="rgba(22,22,26,0.85)"/>' +
+    '<text x="22" y="16.5" font-family="-apple-system,Helvetica,sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">⌾ AR</text>' +
+    '</svg>'
+  )
+
+// Buton kaplamasının içindeki zorunlu tek <img> — alan kaplar, görünmez.
+const SEFFAF_IMG =
+  'data:image/svg+xml;charset=utf-8,' +
+  encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>')
 
 import { kesimUret } from './cutout.js'
 import { duzlemGlbUret, gercekArDestekliMi } from './glb.js'
@@ -140,18 +156,32 @@ function izgaraCiz() {
   kap.innerHTML = ''
 
   liste.forEach((u, i) => {
-    const b = document.createElement('button')
+    // <a> bir <button> içinde geçersiz olduğu için kart bir <div>
+    const b = document.createElement('div')
     b.className = 'kart'
+    b.setAttribute('role', 'button')
+    b.tabIndex = 0
+
+    // iOS'ta rozet gerçek bir AR linkidir (tek <img> = rozetin kendisi):
+    // dokunuş Quick Look'u doğrudan kamera modunda açar, vitrinden tek adım.
+    const rozet =
+      iosMu() && u.usdz
+        ? `<a class="kart-ar" rel="ar" href="${u.usdz}?s=${SURUM}"><img src="${AR_ROZET}" alt="AR"></a>`
+        : `<span class="kart-ar">⌾ AR</span>`
+
     b.innerHTML = `
       <div class="kart-gorsel">
         <img src="${u.gorsel}" alt="${u.ad}" loading="lazy">
-        <span class="kart-ar">⌾ AR</span>
+        ${rozet}
       </div>
       <div class="kart-ad">${u.ad}</div>
       <div class="kart-tur">${u.tur || u.kategori}</div>
       <div class="kart-olcu">${olcuYaz(u)}</div>
       <div class="kart-fiyat">${fiyatYaz(u.fiyat)}</div>`
+
     b.addEventListener('click', () => arAc(liste, i))
+    // Rozete dokunuş yalnızca AR'ı açsın, altta ekran değişmesin
+    b.querySelector('a.kart-ar')?.addEventListener('click', (e) => e.stopPropagation())
     kap.appendChild(b)
   })
 }
@@ -182,7 +212,7 @@ async function arAc(liste, indeks) {
     // Sürükleme modu zemini varsayımla hesaplar; tam oturma gerçek AR'da.
     // Kullanıcıyı doğru butona yönlendir.
     $('#ar-ipucu').textContent = iosMu()
-      ? 'Tam oturma için: ⬚ Odaya Sabitle → sağ üstteki küpe dokun'
+      ? '⬚ Odaya Sabitle — kamera doğrudan açılır'
       : 'Zemine tam oturması için: ⬚ Odaya Sabitle'
   }
   await yonelimSozu
@@ -331,21 +361,28 @@ function sensorDurumuYaz() {
  */
 async function gercekArButonunuTazele() {
   const u = durum.arListesi[durum.arIndeks]
-  const btn = $('#btn-gercek-ar')
+  const kap = $('#btn-gercek-ar-kap')
+  const link = $('#btn-gercek-ar')
+  $('#btn-gercek-ar-img').src = SEFFAF_IMG
 
   let var_ = false
   if (iosMu()) {
     var_ = !!u?.usdz
-    if (var_) btn.setAttribute('href', u.usdz + '?s=' + SURUM)
-    else btn.removeAttribute('href')
+    if (var_) {
+      link.rel = 'ar'
+      link.setAttribute('href', u.usdz + '?s=' + SURUM)
+    } else {
+      link.removeAttribute('href')
+      link.removeAttribute('rel')
+    }
   } else if (/android/i.test(navigator.userAgent)) {
     var_ = !!u?.glb
   } else {
     var_ = await gercekArDestekliMi()
   }
 
-  btn.classList.toggle('gizli', !var_)
-  btn.classList.toggle('one-cikar', var_)
+  kap.classList.toggle('gizli', !var_)
+  kap.classList.toggle('one-cikar', var_)
   return var_
 }
 
@@ -363,14 +400,13 @@ const uygulamaIciTarayici = () =>
 
 async function gercekAraGec(e) {
   const u = durum.arListesi[durum.arIndeks]
-  const btn = $('#btn-gercek-ar')
-  const eskiMetin = btn.innerHTML
+  const etiket = $('#btn-gercek-ar-kap .ar-btn-etiket')
+  const eskiMetin = etiket.innerHTML
 
-  // iOS: buton zaten href'i ürünün USDZ'sine bakan gerçek bir rel=ar
-  // bağlantısı — varsayılan davranışa DOKUNMA ki Safari dokunuşu doğrudan
-  // linke saysın ve Quick Look tam yetkiyle (AR sekmesi aktif) açılsın.
+  // iOS: dokunuş, kaplama <a rel=ar>'a doğal gider — Quick Look doğrudan
+  // kamera modunda açılır. JS'in karışmaması gerekir.
   if (iosMu()) {
-    if (!btn.getAttribute('href')) {
+    if (!$('#btn-gercek-ar').getAttribute('href')) {
       e.preventDefault()
       $('#ar-ipucu').textContent = 'Bu ürün için iOS modeli hazır değil'
       $('#ar-ipucu').style.opacity = '1'
@@ -379,7 +415,7 @@ async function gercekAraGec(e) {
   }
 
   e.preventDefault()
-  btn.innerHTML = '<img alt="" style="display:none"><span>◌</span>Hazırlanıyor'
+  etiket.innerHTML = '<span>◌</span>Hazırlanıyor'
 
   try {
     const mv = $('#mv-canli')
@@ -408,7 +444,7 @@ async function gercekAraGec(e) {
     $('#ar-ipucu').textContent = 'Gerçek AR başlatılamadı — cihaz desteklemiyor olabilir'
     $('#ar-ipucu').style.opacity = '1'
   } finally {
-    btn.innerHTML = eskiMetin
+    etiket.innerHTML = eskiMetin
   }
 }
 
@@ -484,7 +520,7 @@ function olaylariBagla() {
     $('#kal-fov-deger').textContent = e.target.value + '°'
   })
 
-  $('#btn-gercek-ar').addEventListener('click', gercekAraGec)
+  $('#btn-gercek-ar-kap').addEventListener('click', gercekAraGec)
 
   $('#ar-bilgi').addEventListener('click', () => $('#bilgi').classList.remove('gizli'))
   $('#bilgi-kapat').addEventListener('click', () => $('#bilgi').classList.add('gizli'))
