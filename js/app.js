@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '7'
+const SURUM = '8'
 
 import { kesimUret } from './cutout.js'
 import { duzlemGlbUret, gercekArDestekliMi } from './glb.js'
@@ -181,7 +181,9 @@ async function arAc(liste, indeks) {
   if (gercekAr) {
     // Sürükleme modu zemini varsayımla hesaplar; tam oturma gerçek AR'da.
     // Kullanıcıyı doğru butona yönlendir.
-    $('#ar-ipucu').textContent = 'Zemine tam oturması için: ⬚ Odaya Sabitle'
+    $('#ar-ipucu').textContent = iosMu()
+      ? 'Tam oturma için: ⬚ Odaya Sabitle → sağ üstteki küpe dokun'
+      : 'Zemine tam oturması için: ⬚ Odaya Sabitle'
   }
   await yonelimSozu
   sabitDugmesiTazele()
