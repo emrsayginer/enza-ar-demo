@@ -11,7 +11,7 @@ if (location.protocol === 'http:' && !/^(localhost|127\.|192\.168\.)/.test(locat
   location.replace('https://' + location.host + location.pathname + location.search)
 }
 </script>
-<link rel="stylesheet" href="css/app.css?s=13">
+<link rel="stylesheet" href="css/app.css?s=14">
 </head>
 <body>
 
@@ -121,14 +121,13 @@ if (location.protocol === 'http:' && !/^(localhost|127\.|192\.168\.)/.test(locat
         <button id="btn-olcu" class="ar-btn"><span>⇹</span>Ölçü</button>
         <button id="btn-cevir" class="ar-btn"><span>⇄</span>Çevir</button>
         <button id="btn-sabit" class="ar-btn"><span>⌖</span>Sabitle</button>
-        <!-- Safari'nin AR linki kuralı katıdır: <a rel="ar"> içinde YALNIZCA
-             tek bir <img> olabilir. Kurala uyulursa dokunuş Quick Look'u
-             DOĞRUDAN kamera modunda açar — görüntüleyici, sekme, küp yok.
-             Bu yüzden etiket linkin dışında (pointer-events:none) durur,
-             link ise tüm butonu kaplayan görünmez bir katmandır. -->
+        <!-- Safari'nin AR linki kuralı: <a rel="ar"> içinde tek ve GÖRÜNÜR
+             bir <img> olmalı. Görünmez görsel de kural ihlali sayılıyor ve
+             AR kilitleniyor — bu yüzden butonun tüm yüzü (ikon + yazı) tek
+             bir SVG görsel olarak linkin içinde duruyor; kartlardaki ⌾ AR
+             rozetiyle birebir aynı, sahada kanıtlanmış desen. -->
         <div id="btn-gercek-ar-kap" class="ar-btn gizli">
-          <span class="ar-btn-etiket"><span>⬚</span>Odaya Sabitle</span>
-          <a id="btn-gercek-ar" class="ar-kaplama"><img id="btn-gercek-ar-img" alt=""></a>
+          <a id="btn-gercek-ar" class="ar-kaplama"><img id="btn-gercek-ar-img" alt="Odaya Sabitle"></a>
         </div>
         <button id="btn-kal" class="ar-btn"><span>⚙</span>Ayar</button>
         <button id="btn-foto" class="ar-btn"><span>◉</span>Fotoğraf</button>
@@ -217,6 +216,6 @@ if (location.protocol === 'http:' && !/^(localhost|127\.|192\.168\.)/.test(locat
 </div>
 
 <script src="assets/models/model-viewer.min.js" type="module"></script>
-<script src="js/app.js?s=13" type="module"></script>
+<script src="js/app.js?s=14" type="module"></script>
 </body>
 </html>

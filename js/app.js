@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '13'
+const SURUM = '14'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -20,10 +20,18 @@ const AR_ROZET =
     '</svg>'
   )
 
-// Buton kaplamasının içindeki zorunlu tek <img> — alan kaplar, görünmez.
-const SEFFAF_IMG =
+// "Odaya Sabitle" butonunun tüm yüzü — <a rel=ar> içindeki tek GÖRÜNÜR <img>.
+// Görünmez görsel Safari'nin AR linki denetiminden geçmiyor; rozetle aynı
+// desen: ikon + yazı tek SVG'de.
+const ODAYA_SABITLE_IMG =
   'data:image/svg+xml;charset=utf-8,' +
-  encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>')
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 52">' +
+    '<rect x="35" y="6" width="14" height="14" rx="3" fill="none" stroke="#16161a" stroke-width="1.8" stroke-dasharray="3.5 2.5"/>' +
+    '<g fill="#16161a" font-family="-apple-system,Helvetica,sans-serif" font-size="10.5" font-weight="700" text-anchor="middle">' +
+    '<text x="42" y="35">Odaya</text><text x="42" y="47">Sabitle</text></g>' +
+    '</svg>'
+  )
 
 import { kesimUret } from './cutout.js'
 import { duzlemGlbUret, gercekArDestekliMi } from './glb.js'
@@ -384,7 +392,7 @@ async function gercekArButonunuTazele() {
   const u = durum.arListesi[durum.arIndeks]
   const kap = $('#btn-gercek-ar-kap')
   const link = $('#btn-gercek-ar')
-  $('#btn-gercek-ar-img').src = SEFFAF_IMG
+  $('#btn-gercek-ar-img').src = ODAYA_SABITLE_IMG
 
   let var_ = false
   if (iosMu()) {
@@ -421,8 +429,7 @@ const uygulamaIciTarayici = () =>
 
 async function gercekAraGec(e) {
   const u = durum.arListesi[durum.arIndeks]
-  const etiket = $('#btn-gercek-ar-kap .ar-btn-etiket')
-  const eskiMetin = etiket.innerHTML
+  const kap = $('#btn-gercek-ar-kap')
 
   // iOS: dokunuş, kaplama <a rel=ar>'a doğal gider — Quick Look doğrudan
   // kamera modunda açılır. JS'in karışmaması gerekir.
@@ -436,7 +443,7 @@ async function gercekAraGec(e) {
   }
 
   e.preventDefault()
-  etiket.innerHTML = '<span>◌</span>Hazırlanıyor'
+  kap.style.opacity = '0.5' // hazırlanıyor göstergesi
 
   try {
     const mv = $('#mv-canli')
@@ -465,7 +472,7 @@ async function gercekAraGec(e) {
     $('#ar-ipucu').textContent = 'Gerçek AR başlatılamadı — cihaz desteklemiyor olabilir'
     $('#ar-ipucu').style.opacity = '1'
   } finally {
-    etiket.innerHTML = eskiMetin
+    kap.style.opacity = ''
   }
 }
 

@@ -297,16 +297,12 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .ar-btn { font-size: 10.5px; padding: 8px 0; }
 .ar-btn.aktif { background: #fff; color: var(--siyah); }
 
-/* Safari AR linki: butonu kaplayan görünmez katman. İçindeki tek <img>
-   Apple'ın yapı şartı; alan kaplasın ama görünmesin. */
+/* Safari AR linki: butonun tüm yüzü, linkin içindeki tek GÖRÜNÜR <img>.
+   (Görünmez görsel Safari'nin AR denetiminden geçmiyor.) */
 .ar-btn { position: relative; }
-.ar-btn-etiket {
-  pointer-events: none;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-}
-.ar-btn-etiket > span { font-size: 16px; line-height: 1; }
 .ar-kaplama { position: absolute; inset: 0; display: block; }
-.ar-kaplama img { width: 100%; height: 100%; opacity: 0; display: block; }
+.ar-kaplama img { width: 100%; height: 100%; object-fit: contain; display: block; }
+#btn-gercek-ar-kap { min-height: 52px; }
 
 /* Ürün kartındaki AR rozeti de gerçek bir AR linkidir (tek img = rozet SVG) */
 a.kart-ar { padding: 0; background: none; display: block; }
