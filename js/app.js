@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '10'
+const SURUM = '11'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -66,6 +66,11 @@ async function basla() {
     $('#tarayici-uyari').classList.remove('gizli')
     $('#uyari-kapat').addEventListener('click', () => $('#tarayici-uyari').classList.add('gizli'))
   }
+
+  // Ekranda hangi sürümün çalıştığı görünür olsun — önbellek şüphesinde
+  // "hangi sürümdesin" sorusunun cevabı tek bakışta alınır.
+  const dip = document.querySelector('.dip-not')
+  if (dip) dip.textContent += ` · Demo sürüm ${SURUM}`
 
   bannerCiz()
   ciplerCiz()
@@ -234,10 +239,22 @@ function arKapat() {
 async function kamerayiAc() {
   const video = $('#kamera')
   try {
-    const akis = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 } },
-      audio: false,
-    })
+    let akis
+    try {
+      akis = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 } },
+        audio: false,
+      })
+    } catch (ilkHata) {
+      // Quick Look'tan yeni çıkıldıysa iOS kamerayı kısa süre meşgul tutabiliyor
+      // (NotReadableError). Reddedilmediyse bir nefes bekleyip tekrar dene.
+      if (ilkHata?.name === 'NotAllowedError') throw ilkHata
+      await new Promise((r) => setTimeout(r, 900))
+      akis = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' } },
+        audio: false,
+      })
+    }
     video.srcObject = akis
     await video.play()
     video.classList.add('acik')
@@ -255,7 +272,7 @@ async function kamerayiAc() {
     $('#ar-ipucu').textContent =
       hata?.name === 'NotAllowedError'
         ? 'Kamera izni kapalı — adres çubuğundaki AA menüsü → Web Sitesi Ayarları → Kamera → İzin Ver'
-        : 'Kamera bulunamadı — örnek oda sahnesi kullanılıyor'
+        : `Kamera açılamadı (${hata?.name || 'bilinmiyor'}) — örnek oda sahnesi kullanılıyor`
   }
 }
 
