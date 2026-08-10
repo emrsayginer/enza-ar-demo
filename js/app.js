@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '11'
+const SURUM = '12'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -211,9 +211,9 @@ async function arAc(liste, indeks) {
 
   ar.baslat()
   const gercekAr = await gercekArButonunuTazele()
-  if (gercekAr) {
-    // Sürükleme modu zemini varsayımla hesaplar; tam oturma gerçek AR'da.
-    // Kullanıcıyı doğru butona yönlendir.
+  // Kamera açılamadıysa ipucunda TEŞHİS mesajı duruyor — üzerine yazma ve
+  // soldurma; kullanıcının (ve bizim) onu okuyabilmesi lazım.
+  if (gercekAr && durum.kameraVar) {
     $('#ar-ipucu').textContent = iosMu()
       ? '⬚ Odaya Sabitle — kamera doğrudan açılır'
       : 'Zemine tam oturması için: ⬚ Odaya Sabitle'
@@ -223,7 +223,9 @@ async function arAc(liste, indeks) {
   const ipucu = $('#ar-ipucu')
   ipucu.style.opacity = '1'
   clearTimeout(arAc._zaman)
-  arAc._zaman = setTimeout(() => (ipucu.style.opacity = '0'), 4500)
+  if (durum.kameraVar) {
+    arAc._zaman = setTimeout(() => (ipucu.style.opacity = '0'), 4500)
+  }
 }
 
 function arKapat() {
