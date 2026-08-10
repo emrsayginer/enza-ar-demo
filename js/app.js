@@ -5,6 +5,10 @@
  * ürün gerçek ölçüsüyle odaya yerleşir.
  */
 import { ArSahne } from './ar.js'
+// Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
+// istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
+const SURUM = '7'
+
 import { kesimUret } from './cutout.js'
 import { duzlemGlbUret, gercekArDestekliMi } from './glb.js'
 
@@ -32,8 +36,8 @@ let ar
 
 async function basla() {
   const [urunVeri, odaVeri] = await Promise.all([
-    fetch('data/products.json').then((r) => r.json()),
-    fetch('data/rooms.json').then((r) => r.json()).catch(() => ({ sahneler: [] })),
+    fetch('data/products.json?s=' + SURUM).then((r) => r.json()),
+    fetch('data/rooms.json?s=' + SURUM).then((r) => r.json()).catch(() => ({ sahneler: [] })),
   ])
 
   // Ölçüsü tam VE katalog karesi AR'a uygun ürünler (bkz. tools/qualify.mjs)
@@ -330,7 +334,7 @@ async function gercekArButonunuTazele() {
   let var_ = false
   if (iosMu()) {
     var_ = !!u?.usdz
-    if (var_) btn.setAttribute('href', u.usdz)
+    if (var_) btn.setAttribute('href', u.usdz + '?s=' + SURUM)
     else btn.removeAttribute('href')
   } else if (/android/i.test(navigator.userAgent)) {
     var_ = !!u?.glb
