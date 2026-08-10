@@ -114,7 +114,11 @@
         <button id="btn-olcu" class="ar-btn"><span>⇹</span>Ölçü</button>
         <button id="btn-cevir" class="ar-btn"><span>⇄</span>Çevir</button>
         <button id="btn-sabit" class="ar-btn"><span>⌖</span>Sabitle</button>
-        <button id="btn-gercek-ar" class="ar-btn gizli"><span>⬚</span>Odaya Sabitle</button>
+        <!-- iOS'ta bu GERÇEK bir rel=ar bağlantısıdır: Quick Look'un AR modu
+             yalnızca doğrudan kullanıcı dokunuşuyla açılan linklerde tam
+             yetkili çalışır; kodla tetiklenen tıklamada AR sekmesi kilitli
+             kalabiliyor. İlk çocuğun <img> olması Safari'nin QL kuralı. -->
+        <a id="btn-gercek-ar" class="ar-btn gizli" rel="ar"><img alt="" style="display:none"><span>⬚</span>Odaya Sabitle</a>
         <button id="btn-kal" class="ar-btn"><span>⚙</span>Ayar</button>
         <button id="btn-foto" class="ar-btn"><span>◉</span>Fotoğraf</button>
       </div>

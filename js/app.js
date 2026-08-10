@@ -173,17 +173,7 @@ async function arAc(liste, indeks) {
   await arUrunuYukle()
 
   ar.baslat()
-  // Gerçek zemin algılama: Android'de Scene Viewer (GLB), iPhone'da Quick Look
-  // (USDZ). Android'de WebXR bayrağına bakmıyoruz — Scene Viewer, WebXR
-  // kapalı cihazlarda da çalışır; yeter ki dosya adresi gerçek olsun.
-  const aktifUrun = durum.arListesi[durum.arIndeks]
-  const gercekAr = iosMu()
-    ? !!aktifUrun?.usdz
-    : /android/i.test(navigator.userAgent)
-      ? !!aktifUrun?.glb
-      : await gercekArDestekliMi()
-  $('#btn-gercek-ar').classList.toggle('gizli', !gercekAr)
-  $('#btn-gercek-ar').classList.toggle('one-cikar', gercekAr)
+  const gercekAr = await gercekArButonunuTazele()
   if (gercekAr) {
     // Sürükleme modu zemini varsayımla hesaplar; tam oturma gerçek AR'da.
     // Kullanıcıyı doğru butona yönlendir.
@@ -296,6 +286,7 @@ async function arUrunuYukle() {
   const kesim = await kesimUret(u.arGorsel || u.gorsel)
   ar.urunAyarla(u, kesim, yerlestirmeYuzeyi(u))
   cevirDugmesiTazele()
+  gercekArButonunuTazele()
 }
 
 /**
@@ -324,6 +315,34 @@ function sensorDurumuYaz() {
  * kullanıcı yürüdüğünde ürün kayar. Burada konum da takip edildiği için ürün
  * odada gerçekten sabit kalır ve etrafında dolaşılabilir.
  */
+/**
+ * "Odaya Sabitle" butonunu aktif ürüne göre hazırlar.
+ *
+ * Gerçek zemin algılama: Android'de Scene Viewer (GLB), iPhone'da Quick Look
+ * (USDZ). Android'de WebXR bayrağına bakılmaz — Scene Viewer, WebXR kapalı
+ * cihazlarda da çalışır. iOS'ta butonun href'i doğrudan USDZ'ye bağlanır;
+ * dokunuş linke doğal gittiği için Quick Look AR sekmesi tam yetkili açılır.
+ */
+async function gercekArButonunuTazele() {
+  const u = durum.arListesi[durum.arIndeks]
+  const btn = $('#btn-gercek-ar')
+
+  let var_ = false
+  if (iosMu()) {
+    var_ = !!u?.usdz
+    if (var_) btn.setAttribute('href', u.usdz)
+    else btn.removeAttribute('href')
+  } else if (/android/i.test(navigator.userAgent)) {
+    var_ = !!u?.glb
+  } else {
+    var_ = await gercekArDestekliMi()
+  }
+
+  btn.classList.toggle('gizli', !var_)
+  btn.classList.toggle('one-cikar', var_)
+  return var_
+}
+
 const iosMu = () =>
   /iPad|iPhone|iPod/.test(navigator.userAgent) ||
   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
@@ -336,38 +355,25 @@ const iosMu = () =>
 const uygulamaIciTarayici = () =>
   /WhatsApp|Instagram|FBAN|FBAV|FB_IAB|Line\/|Twitter/i.test(navigator.userAgent)
 
-/** iOS: AR Quick Look. Zemini kendisi bulur, ürünü oturtur, taşımaya izin verir. */
-function quickLookAc(usdzYolu) {
-  const a = document.createElement('a')
-  a.rel = 'ar'
-  a.href = usdzYolu
-  a.appendChild(document.createElement('img')) // Safari bir alt öğe bekler
-  a.style.display = 'none'
-  document.body.appendChild(a)
-  a.click()
-  setTimeout(() => a.remove(), 1000)
-}
-
-async function gercekAraGec() {
+async function gercekAraGec(e) {
   const u = durum.arListesi[durum.arIndeks]
   const btn = $('#btn-gercek-ar')
   const eskiMetin = btn.innerHTML
 
+  // iOS: buton zaten href'i ürünün USDZ'sine bakan gerçek bir rel=ar
+  // bağlantısı — varsayılan davranışa DOKUNMA ki Safari dokunuşu doğrudan
+  // linke saysın ve Quick Look tam yetkiyle (AR sekmesi aktif) açılsın.
   if (iosMu()) {
-    if (!u.usdz) {
+    if (!btn.getAttribute('href')) {
+      e.preventDefault()
       $('#ar-ipucu').textContent = 'Bu ürün için iOS modeli hazır değil'
       $('#ar-ipucu').style.opacity = '1'
-      return
     }
-    quickLookAc(u.usdz)
-    $('#ar-ipucu').textContent = uygulamaIciTarayici()
-      ? 'AR sekmesi soluksa: linki kopyalayıp SAFARİ’de açın — WhatsApp içinde AR kapalıdır'
-      : 'Açılan ekranda üstteki “AR” sekmesini seçin'
-    $('#ar-ipucu').style.opacity = '1'
     return
   }
 
-  btn.innerHTML = '<span>◌</span>Hazırlanıyor'
+  e.preventDefault()
+  btn.innerHTML = '<img alt="" style="display:none"><span>◌</span>Hazırlanıyor'
 
   try {
     const mv = $('#mv-canli')
