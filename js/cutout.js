@@ -419,6 +419,35 @@ function golgeKalintisiniSoldur(ctx, G, Y, fon) {
   ctx.putImageData(tumu, 0, 0)
 }
 
+/** Tuvali görünür (alfa > 12) piksellerin sınırına kadar kırpar. */
+function sonKirp(kaynak) {
+  const G = kaynak.width, Y = kaynak.height
+  const p = kaynak.getContext('2d').getImageData(0, 0, G, Y).data
+  let minX = G, minY = Y, maxX = -1, maxY = -1
+
+  for (let y = 0; y < Y; y++) {
+    for (let x = 0; x < G; x++) {
+      if (p[(y * G + x) * 4 + 3] > 12) {
+        if (x < minX) minX = x
+        if (x > maxX) maxX = x
+        if (y < minY) minY = y
+        if (y > maxY) maxY = y
+      }
+    }
+  }
+
+  if (maxX < 0) return { canvas: kaynak, en: G, boy: Y }
+  const en = maxX - minX + 1
+  const boy = maxY - minY + 1
+  if (en === G && boy === Y) return { canvas: kaynak, en, boy }
+
+  const c = document.createElement('canvas')
+  c.width = en
+  c.height = boy
+  c.getContext('2d').drawImage(kaynak, minX, minY, en, boy, 0, 0, en, boy)
+  return { canvas: c, en, boy }
+}
+
 /**
  * Tam çözünürlükte şeffaf kesim üretir.
  * @returns {Promise<{canvas: HTMLCanvasElement, en: number, boy: number}>}
@@ -460,7 +489,12 @@ export async function kesimUret(src) {
 
   golgeKalintisiniSoldur(kctx, kEn, kBoy, fon)
 
-  const sonuc = { canvas: kirp, en: kEn, boy: kBoy }
+  // Gölge temizliği en alttaki pikselleri sildiği için dokunun altında boş
+  // şeffaf bir bant kalabiliyor. Yeniden kırpılmazsa ürün AR'da o bant kadar
+  // HAVADA durur: model tabanı zemine oturur ama görünür kısım yukarıda başlar.
+  const son = sonKirp(kirp)
+
+  const sonuc = { canvas: son.canvas, en: son.en, boy: son.boy }
   onbellek.set(src, sonuc)
   return sonuc
 }
