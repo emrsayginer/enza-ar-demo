@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '15'
+const SURUM = '16'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -115,8 +115,16 @@ function bannerCiz() {
     if (!urun) return
     const sahne = durum.sahneler[i % Math.max(1, durum.sahneler.length)]
 
-    const el = document.createElement('button')
+    // iOS'ta "Kamerayla Dene" hapı gerçek AR linki: banner'dan TEK dokunuşla
+    // kamera açılır. Diğer platformlarda slayt eski akışla AR ekranını açar.
+    const hap =
+      iosMu() && urun.usdz
+        ? `<a class="slayt-btn-ar" rel="ar" href="${quickLookHref(urun)}"><img src="${KAMERA_HAPI}" alt="Kamerayla Dene"></a>`
+        : `<span class="slayt-btn"><i>⌾</i> Kamerayla Dene</span>`
+
+    const el = document.createElement('div')
     el.className = 'slayt'
+    el.setAttribute('role', 'button')
     el.innerHTML = `
       <img src="${sahne ? sahne.dosya : urun.gorsel}" alt="">
       <div class="ar-etiket">ODANDA DENE</div>
@@ -124,10 +132,14 @@ function bannerCiz() {
         <div class="slayt-ust-etiket">${s.etiket}</div>
         <h3>${s.baslik}</h3>
         <p>${s.alt}</p>
-        <span class="slayt-btn"><i>⌾</i> Kamerayla Dene</span>
+        ${hap}
       </div>`
     el.addEventListener('click', () => arAc(durum.urunler.filter((u) => u.kategori === s.kategori), 0))
+    el.querySelector('a.slayt-btn-ar')?.addEventListener('click', (e) => e.stopPropagation())
     kap.appendChild(el)
+
+    // Banner ürünleri en olası dokunuşlar — modellerini önceden ısıt
+    setTimeout(() => modeliIsit(urun), 2500 + i * 800)
 
     const nokta = document.createElement('i')
     if (i === 0) nokta.className = 'aktif'
@@ -352,6 +364,7 @@ async function arUrunuYukle() {
   ar.urunAyarla(u, kesim, yerlestirmeYuzeyi(u))
   cevirDugmesiTazele()
   gercekArButonunuTazele()
+  modeliIsit(u) // Odaya Sabitle'ye dokunmadan model hazır olsun
 }
 
 /**
@@ -434,6 +447,27 @@ function quickLookHref(u) {
 const iosMu = () =>
   /iPad|iPhone|iPod/.test(navigator.userAgent) ||
   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+
+// Banner'daki "Kamerayla Dene" hapı — rozetle aynı desen: <a rel=ar> içinde
+// tek görünür SVG. Reklam görselinden TEK dokunuşla kamera; Begüm'ün
+// ilk mesajındaki senaryonun kendisi.
+const KAMERA_HAPI =
+  'data:image/svg+xml;charset=utf-8,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="176" height="40">' +
+    '<rect width="176" height="40" rx="20" fill="#ffffff"/>' +
+    '<text x="88" y="25.5" font-family="-apple-system,Helvetica,sans-serif" font-size="13" font-weight="600" fill="#16161a" text-anchor="middle">⌾  Kamerayla Dene</text>' +
+    '</svg>'
+  )
+
+// Ön-yükleme: kullanıcı henüz dokunmadan USDZ arka planda indirilir; Quick
+// Look açıldığında model tarayıcı önbelleğinden gelir, bekleme kalmaz.
+const isitilanlar = new Set()
+function modeliIsit(u) {
+  if (!u?.usdz || isitilanlar.has(u.sku)) return
+  isitilanlar.add(u.sku)
+  fetch(u.usdz + '?s=' + SURUM, { priority: 'low' }).catch(() => isitilanlar.delete(u.sku))
+}
 
 /**
  * WhatsApp/Instagram/Facebook içi tarayıcı tespiti.
