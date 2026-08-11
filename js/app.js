@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '14'
+const SURUM = '15'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -179,7 +179,7 @@ function izgaraCiz() {
     // dokunuş Quick Look'u doğrudan kamera modunda açar, vitrinden tek adım.
     const rozet =
       iosMu() && u.usdz
-        ? `<a class="kart-ar" rel="ar" href="${u.usdz}?s=${SURUM}"><img src="${AR_ROZET}" alt="AR"></a>`
+        ? `<a class="kart-ar" rel="ar" href="${quickLookHref(u)}"><img src="${AR_ROZET}" alt="AR"></a>`
         : `<span class="kart-ar">⌾ AR</span>`
 
     b.innerHTML = `
@@ -399,7 +399,7 @@ async function gercekArButonunuTazele() {
     var_ = !!u?.usdz
     if (var_) {
       link.rel = 'ar'
-      link.setAttribute('href', u.usdz + '?s=' + SURUM)
+      link.setAttribute('href', quickLookHref(u))
     } else {
       link.removeAttribute('href')
       link.removeAttribute('rel')
@@ -413,6 +413,22 @@ async function gercekArButonunuTazele() {
   kap.classList.toggle('gizli', !var_)
   kap.classList.toggle('one-cikar', var_)
   return var_
+}
+
+/**
+ * Quick Look bağlantısı: AR görünümünün altında ürün adı, fiyatı ve
+ * "Sepete Ekle" düğmesi görünür (Apple'ın banner parametreleri).
+ * Kamera + ürün + fiyat + satın alma tek ekranda — vitrin cümlesi bu.
+ */
+function quickLookHref(u) {
+  const parca = new URLSearchParams({
+    callToAction: 'Sepete Ekle',
+    checkoutTitle: u.ad,
+    checkoutSubtitle: (u.tur || u.kategori) + ' · ' + olcuYaz(u),
+    price: fiyatYaz(u.fiyat),
+    canonicalWebPageURL: location.origin + location.pathname,
+  })
+  return `${u.usdz}?s=${SURUM}#${parca.toString()}`
 }
 
 const iosMu = () =>
