@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '22'
+const SURUM = '23'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -17,6 +17,17 @@ const AR_ROZET =
     '<svg xmlns="http://www.w3.org/2000/svg" width="44" height="24">' +
     '<rect width="44" height="24" rx="5" fill="rgba(22,22,26,0.85)"/>' +
     '<text x="22" y="16.5" font-family="-apple-system,Helvetica,sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">⌾ AR</text>' +
+    '</svg>'
+  )
+
+// Gerçek hacimli 3D modeli olan ürünlerin rozeti — vitrinde göze çarpsın
+const AR_ROZET_3D =
+  'data:image/svg+xml;charset=utf-8,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="86" height="24">' +
+    '<rect width="86" height="24" rx="5" fill="#0d7a4f"/>' +
+    '<circle cx="12" cy="12" r="3" fill="#7dffc0"/>' +
+    '<text x="49" y="16.5" font-family="-apple-system,Helvetica,sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">GERÇEK 3D</text>' +
     '</svg>'
   )
 
@@ -239,10 +250,13 @@ function izgaraCiz() {
 
     // iOS'ta rozet gerçek bir AR linkidir (tek <img> = rozetin kendisi):
     // dokunuş Quick Look'u doğrudan kamera modunda açar, vitrinden tek adım.
+    const rozetGorseli = u.gercek3D ? AR_ROZET_3D : AR_ROZET
     const rozet =
       iosMu() && u.usdz
-        ? `<a class="kart-ar" rel="ar" href="${quickLookHref(u)}"><img src="${AR_ROZET}" alt="AR"></a>`
-        : `<span class="kart-ar">⌾ AR</span>`
+        ? `<a class="kart-ar" rel="ar" href="${quickLookHref(u)}"><img src="${rozetGorseli}" alt="AR" style="width:auto"></a>`
+        : u.gercek3D
+          ? `<span class="kart-ar kart-ar-3d">● GERÇEK 3D</span>`
+          : `<span class="kart-ar">⌾ AR</span>`
 
     b.innerHTML = `
       <div class="kart-gorsel">

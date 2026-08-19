@@ -335,7 +335,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 /* Ürün kartındaki AR rozeti de gerçek bir AR linkidir (tek img = rozet SVG) */
 a.kart-ar { padding: 0; background: none; display: block; }
-a.kart-ar img { display: block; width: 44px; height: 24px; }
+a.kart-ar img { display: block; height: 24px; }
+.kart-ar-3d { background: #0d7a4f !important; }
 
 /* Gerçek AR mevcutken asıl eylem bu butondur — göz oraya gitsin */
 .ar-btn.one-cikar {
