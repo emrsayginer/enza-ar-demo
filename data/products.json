@@ -3,26 +3,26 @@
   "cekilme": "2026-08-10T18:22:47.063Z",
   "urunler": [
     {
-      "sku": "DEMO3D",
-      "ad": "ATELIER",
       "urlYolu": null,
-      "tur": "Örnek Ürün — Gerçek 3D Model",
       "fiyat": null,
       "gorselUrl": null,
-      "yukseklikMm": 686,
-      "genislikMm": 827,
-      "derinlikMm": 570,
       "agirlikKg": null,
-      "kategori": "Koltuk",
+      "urunUrl": null,
       "oda": "Salon",
-      "gorsel": "assets/products/demo3d-1.png",
+      "tur": "Örnek Ürün — Gerçek 3D Model",
+      "arUygun": true,
+      "arPuan": 0,
       "gorseller": [
         "assets/products/demo3d-1.png"
       ],
-      "urunUrl": null,
-      "arUygun": true,
       "arGorsel": "assets/products/demo3d-1.png",
-      "arPuan": 0,
+      "sku": "DEMO3D",
+      "ad": "ATELIER",
+      "kategori": "Koltuk",
+      "genislikMm": 827,
+      "derinlikMm": 570,
+      "yukseklikMm": 686,
+      "gorsel": "assets/products/demo3d-1.png",
       "usdz": "assets/models/hero-koltuk.usdz",
       "glb": "assets/models/hero-koltuk.glb"
     },
@@ -77,6 +77,30 @@
       "arPuan": 0.072,
       "usdz": "assets/usdz/1657603.usdz",
       "glb": "assets/glb/1657603.glb"
+    },
+    {
+      "urlYolu": null,
+      "fiyat": null,
+      "gorselUrl": null,
+      "agirlikKg": null,
+      "urunUrl": null,
+      "oda": "Salon",
+      "tur": "Örnek Ürün — Gerçek 3D Model",
+      "arUygun": true,
+      "arPuan": 0,
+      "gorseller": [
+        "assets/products/sofa3d-1.png"
+      ],
+      "arGorsel": "assets/products/sofa3d-1.png",
+      "sku": "SOFA3D",
+      "ad": "LOFT",
+      "kategori": "Koltuk",
+      "genislikMm": 2032,
+      "derinlikMm": 991,
+      "yukseklikMm": 965,
+      "gorsel": "assets/products/sofa3d-1.png",
+      "usdz": "assets/usdz/SOFA3D.usdz",
+      "glb": "assets/glb/SOFA3D.glb"
     },
     {
       "sku": "1642966",
@@ -177,6 +201,30 @@
       "arPuan": 99,
       "usdz": null,
       "glb": null
+    },
+    {
+      "urlYolu": null,
+      "fiyat": null,
+      "gorselUrl": null,
+      "agirlikKg": null,
+      "urunUrl": null,
+      "oda": "Salon",
+      "tur": "Örnek Ürün — Gerçek 3D Model",
+      "arUygun": true,
+      "arPuan": 0,
+      "gorseller": [
+        "assets/products/vela-1.png"
+      ],
+      "arGorsel": "assets/products/vela-1.png",
+      "sku": "VELA3D",
+      "ad": "VELA",
+      "kategori": "Berjer",
+      "genislikMm": 930,
+      "derinlikMm": 881,
+      "yukseklikMm": 790,
+      "gorsel": "assets/products/vela-1.png",
+      "usdz": "assets/usdz/VELA.usdz",
+      "glb": "assets/glb/VELA.glb"
     },
     {
       "sku": "1432912",
@@ -306,6 +354,30 @@
       "arPuan": 0.076,
       "usdz": "assets/usdz/13212983.usdz",
       "glb": "assets/glb/13212983.glb"
+    },
+    {
+      "urlYolu": null,
+      "fiyat": null,
+      "gorselUrl": null,
+      "agirlikKg": null,
+      "urunUrl": null,
+      "oda": "Salon",
+      "tur": "Örnek Ürün — Gerçek 3D Model",
+      "arUygun": true,
+      "arPuan": 0,
+      "gorseller": [
+        "assets/products/grisofa-1.png"
+      ],
+      "arGorsel": "assets/products/grisofa-1.png",
+      "sku": "HANSA3D",
+      "ad": "HANSA",
+      "kategori": "Koltuk",
+      "genislikMm": 1985,
+      "derinlikMm": 910,
+      "yukseklikMm": 917,
+      "gorsel": "assets/products/grisofa-1.png",
+      "usdz": "assets/usdz/GRISOFA.usdz",
+      "glb": "assets/glb/GRISOFA.glb"
     },
     {
       "sku": "14311858",
@@ -438,6 +510,30 @@
       "glb": null
     },
     {
+      "urlYolu": null,
+      "fiyat": null,
+      "gorselUrl": null,
+      "agirlikKg": null,
+      "urunUrl": null,
+      "oda": "Salon",
+      "tur": "Örnek Ürün — Gerçek 3D Model",
+      "arUygun": true,
+      "arPuan": 0,
+      "gorseller": [
+        "assets/products/rondo-1.png"
+      ],
+      "arGorsel": "assets/products/rondo-1.png",
+      "sku": "RONDO3D",
+      "ad": "RONDO",
+      "kategori": "Yan Sehpa",
+      "genislikMm": 455,
+      "derinlikMm": 450,
+      "yukseklikMm": 500,
+      "gorsel": "assets/products/rondo-1.png",
+      "usdz": "assets/usdz/RONDO.usdz",
+      "glb": "assets/glb/RONDO.glb"
+    },
+    {
       "sku": "14311859",
       "ad": "VERONA",
       "urlYolu": "/verona-acik-mese-yan-sehpa-45x62-cm-gxy-14311859/",
@@ -566,6 +662,30 @@
       "arPuan": 0.406,
       "usdz": null,
       "glb": null
+    },
+    {
+      "urlYolu": null,
+      "fiyat": null,
+      "gorselUrl": null,
+      "agirlikKg": null,
+      "urunUrl": null,
+      "oda": "Salon",
+      "tur": "Örnek Ürün — Gerçek 3D Model",
+      "arUygun": true,
+      "arPuan": 0,
+      "gorseller": [
+        "assets/products/f27-1.png"
+      ],
+      "arGorsel": "assets/products/f27-1.png",
+      "sku": "MILO3D",
+      "ad": "MILO",
+      "kategori": "Berjer",
+      "genislikMm": 906,
+      "derinlikMm": 873,
+      "yukseklikMm": 849,
+      "gorsel": "assets/products/f27-1.png",
+      "usdz": "assets/usdz/F27.usdz",
+      "glb": "assets/glb/F27.glb"
     },
     {
       "sku": "1653278",
