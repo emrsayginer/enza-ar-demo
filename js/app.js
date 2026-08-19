@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '17'
+const SURUM = '19'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -50,7 +50,8 @@ const durum = {
 }
 
 const paraFormat = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-const fiyatYaz = (f) => (f ? `${paraFormat.format(f)} TL` : '')
+// Fiyatı olmayan tek ürün, hedef kaliteyi temsil eden örnek 3D model
+const fiyatYaz = (f) => (f ? `${paraFormat.format(f)} TL` : 'Örnek 3D Model')
 const olcuYaz = (u) =>
   `${Math.round(u.genislikMm / 10)} × ${Math.round(u.derinlikMm / 10)} × ${Math.round(u.yukseklikMm / 10)} cm`
 
@@ -148,7 +149,7 @@ function kampanyaGoster(u, katmanIci = false) {
 /** Banner slaytları — her slayt bir kampanya + arkasında AR'a bağlı bir ürün. */
 function bannerCiz() {
   const oneCikan = [
-    { kategori: 'Koltuk', etiket: 'YENİ SEZON', baslik: 'Koltuk Koleksiyonu', alt: 'Salonuna nasıl yakışacağını şimdi gör' },
+    { kategori: 'Koltuk', etiket: 'GERÇEK 3D MODEL', baslik: 'ATELIER', alt: 'Kameranla odana yerleştir, etrafında dolaş' },
     { kategori: 'Yemek Masası', etiket: 'YEMEK ODASI', baslik: 'Masalar', alt: 'Odana sığacak mı? Kamerayla ölç' },
     { kategori: 'Berjer', etiket: 'TAMAMLAYICI', baslik: 'Berjerler', alt: 'Boş köşen için doğru berjeri seç' },
     { kategori: 'Kitaplık', etiket: 'DÜZEN', baslik: 'Kitaplıklar', alt: 'Duvarında ne kadar yer kaplar?' },
@@ -172,8 +173,10 @@ function bannerCiz() {
     const el = document.createElement('div')
     el.className = 'slayt'
     el.setAttribute('role', 'button')
+    // Hero (gerçek 3D örnek) kendi render'ıyla çıkar; diğer slaytlar oda sahnesiyle
+    const slaytGorseli = urun.sku === 'DEMO3D' ? urun.gorsel : (sahne ? sahne.dosya : urun.gorsel)
     el.innerHTML = `
-      <img src="${sahne ? sahne.dosya : urun.gorsel}" alt="">
+      <img src="${slaytGorseli}" alt="" ${urun.sku === 'DEMO3D' ? 'style="object-fit:contain;background:#ece7df;padding:18px 0"' : ''}>
       <div class="ar-etiket">ODANDA DENE</div>
       <div class="slayt-katman">
         <div class="slayt-ust-etiket">${s.etiket}</div>

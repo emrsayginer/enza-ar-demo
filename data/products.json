@@ -3,6 +3,30 @@
   "cekilme": "2026-08-10T18:22:47.063Z",
   "urunler": [
     {
+      "sku": "DEMO3D",
+      "ad": "ATELIER",
+      "urlYolu": null,
+      "tur": "Örnek Ürün — Gerçek 3D Model",
+      "fiyat": null,
+      "gorselUrl": null,
+      "yukseklikMm": 686,
+      "genislikMm": 827,
+      "derinlikMm": 570,
+      "agirlikKg": null,
+      "kategori": "Koltuk",
+      "oda": "Salon",
+      "gorsel": "assets/products/demo3d-1.png",
+      "gorseller": [
+        "assets/products/demo3d-1.png"
+      ],
+      "urunUrl": null,
+      "arUygun": true,
+      "arGorsel": "assets/products/demo3d-1.png",
+      "arPuan": 0,
+      "usdz": "assets/models/hero-koltuk.usdz",
+      "glb": "assets/models/hero-koltuk.glb"
+    },
+    {
       "sku": "1432965",
       "ad": "ASTERA",
       "urlYolu": "/astera-2-li-koltuk-pati-dostu-kadife-dokulu-14804-petrol-yesil-1432965/",

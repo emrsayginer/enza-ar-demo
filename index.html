@@ -12,7 +12,7 @@ if (location.protocol === 'http:' && !/^(localhost|127\.|192\.168\.)/.test(locat
   location.replace('https://' + location.host + location.pathname + location.search)
 }
 </script>
-<link rel="stylesheet" href="css/app.css?s=17">
+<link rel="stylesheet" href="css/app.css?s=19">
 </head>
 <body>
 
@@ -169,6 +169,7 @@ if (location.protocol === 'http:' && !/^(localhost|127\.|192\.168\.)/.test(locat
     <model-viewer
       id="mv"
       src="assets/models/chair.glb"
+      ios-src="assets/models/hero-koltuk.usdz"
       alt="Örnek 3D koltuk modeli"
       ar
       ar-modes="webxr scene-viewer quick-look"
@@ -188,12 +189,9 @@ if (location.protocol === 'http:' && !/^(localhost|127\.|192\.168\.)/.test(locat
     </div>
     <div class="uc-boyut-not">
       Bu ekran, 3D modeli hazır bir ürünün nasıl çalışacağını gösterir: parmakla 360° döndürme,
-      “Odana Yerleştir” ile ARCore üzerinden gerçek zemin takibi.
-      Modelin kendisi örnek amaçlı, Enza ürünü değildir.
-      <br><br>
-      Android’de kameraya yerleştirme çalışır. iPhone’da aynı şeyin çalışması için
-      modelin bir de USDZ sürümü gerekir — 3D üretim akışının standart çıktısıdır,
-      bu demoda üretilmedi.
+      “Odana Yerleştir” ile gerçek zemin takibi — iPhone’da (USDZ) ve Android’de (GLB) aynı model.
+      Modelin kendisi örnek amaçlı, Enza ürünü değildir; marka materyalleri geldiğinde
+      kataloğun tamamı bu kaliteye taşınır. Bu ürün vitrinde “ATELIER” adıyla da geziliyor.
     </div>
   </div>
 
@@ -232,6 +230,6 @@ if (location.protocol === 'http:' && !/^(localhost|127\.|192\.168\.)/.test(locat
 </div>
 
 <script src="assets/models/model-viewer.min.js" type="module"></script>
-<script src="js/app.js?s=17" type="module"></script>
+<script src="js/app.js?s=19" type="module"></script>
 </body>
 </html>
