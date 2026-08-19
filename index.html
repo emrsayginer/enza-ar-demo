@@ -268,56 +268,128 @@
     if (cerceve) cerceve.remove() // kamera akışını da kapatır
   })
 
-  // iOS: kreatifteki "Odanda Dene" hapı DOĞRUDAN kamerayı açan gerçek AR
-  // linkine dönüşür (rel=ar + tek görünür img — Safari'nin şartı). Reklamdan
-  // AR'a tek dokunuş: ara sayfa yok, ikinci dokunuş yok. Hap dışına dokunan
-  // eskisi gibi ürün sayfasına/genişlemeye gider.
+  // iOS MUTLAK KURAL: reklamın NERESİNE dokunulursa dokunulsun Quick Look
+  // kamerası açılır. Bunun tek sağlam yolu, Safari'nin AR linki şartını
+  // (rel=ar + içinde TEK görünür <img>) kreatifin TAMAMINA uygulamak:
+  // kreatif canvas'ta birebir resme çevrilir, o resim tek <img> olarak
+  // rel=ar linkin içine konur. Görünüş aynı, davranış: her dokunuş = AR.
   var iosMu = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
 
-  function hapSvg(genislik, yukseklik, yaziBoyu, metin) {
-    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
-      '<svg xmlns="http://www.w3.org/2000/svg" width="' + genislik + '" height="' + yukseklik + '">' +
-      '<rect width="' + genislik + '" height="' + yukseklik + '" rx="' + (yukseklik / 2) + '" fill="#16161a"/>' +
-      '<circle cx="' + (yukseklik * 0.55) + '" cy="' + (yukseklik / 2) + '" r="3" fill="#6ee7a8"/>' +
-      '<text x="' + (genislik / 2 + yukseklik * 0.18) + '" y="' + (yukseklik / 2 + yaziBoyu * 0.36) + '" font-family="-apple-system,Helvetica,sans-serif" font-size="' + yaziBoyu + '" font-weight="600" fill="#fff" text-anchor="middle">' + metin + '</text></svg>'
-    )
-  }
-
   if (iosMu) {
     var kokAdres = location.origin
-    // Reklamda yalnızca GERÇEK 3D modeli olan ürün gösterilir — düz kesimle
-    // "Odanda Dene" vaadi verilmez. Yeni GLB'ler geldikçe buraya eklenir.
-    var arHedefleri = [
-      { kok: '.r320x480', usdz: '/assets/models/hero-koltuk.usdz', baslik: 'ATELIER', altYazi: 'Örnek 3D Model', g: 200, y: 42, f: 14 },
-      { kok: '.r-loft', usdz: '/assets/usdz/SOFA3D.usdz', baslik: 'LOFT', altYazi: 'Örnek 3D Model', g: 132, y: 32, f: 11 },
-      { kok: '.r-vela', usdz: '/assets/usdz/VELA.usdz', baslik: 'VELA', altYazi: 'Örnek 3D Model', g: 132, y: 32, f: 11 },
-      { kok: '.r-hansa', usdz: '/assets/usdz/GRISOFA.usdz', baslik: 'HANSA', altYazi: 'Örnek 3D Model', g: 132, y: 32, f: 11 },
-      { kok: '.r-milo', usdz: '/assets/usdz/F27.usdz', baslik: 'MILO', altYazi: 'Örnek 3D Model', g: 132, y: 32, f: 11 },
-      { kok: '.r320x100', usdz: '/assets/usdz/RONDO.usdz', baslik: 'RONDO', altYazi: 'Örnek 3D Model', g: 118, y: 26, f: 10 }
+    var hedefler = [
+      { kok: '.r320x480', tip: 'inter', w: 320, h: 480, usdz: '/assets/models/hero-koltuk.usdz', baslik: 'ATELIER',
+        satirlar: ['Gerçek 3D model —', 'kameranla odana yerleştir.'], alt: 'GERÇEK 3D · GERÇEK ÖLÇÜ', img: 'assets/products/demo3d-1.png' },
+      { kok: '.r-loft', tip: 'kutu', w: 300, h: 250, usdz: '/assets/usdz/SOFA3D.usdz', baslik: 'LOFT',
+        satirlar: ['Sığar mı? Gerçek 3D', 'modelle odanda gör.'], img: 'assets/products/sofa3d-1.png', imgW: 250, imgSag: -38, imgAlt: -4 },
+      { kok: '.r-vela', tip: 'kutu', w: 300, h: 250, usdz: '/assets/usdz/VELA.usdz', baslik: 'VELA',
+        satirlar: ['Boş köşen için doğru', 'berjer — gerçek 3D.'], img: 'assets/products/vela-1.png', imgW: 220, imgSag: -30, imgAlt: -8 },
+      { kok: '.r-hansa', tip: 'kutu', w: 300, h: 250, usdz: '/assets/usdz/GRISOFA.usdz', baslik: 'HANSA',
+        satirlar: ['İki metrelik konfor —', 'salonuna sığar mı?'], img: 'assets/products/grisofa-1.png', imgW: 240, imgSag: -34, imgAlt: -4 },
+      { kok: '.r-milo', tip: 'kutu', w: 300, h: 250, usdz: '/assets/usdz/F27.usdz', baslik: 'MILO',
+        satirlar: ['Bukle dokulu rahatlık', '— gerçek ölçüsüyle.'], img: 'assets/products/f27-1.png', imgW: 225, imgSag: -26, imgAlt: -10 },
+      { kok: '.r320x100', tip: 'bant', w: 320, h: 100, usdz: '/assets/usdz/RONDO.usdz', baslik: 'RONDO Yan Sehpa',
+        satirlar: ['Gerçek 3D · gerçek ölçü — odanda gör'], img: 'assets/products/rondo-1.png' }
     ]
-    arHedefleri.forEach(function (h) {
-      var kreatif = document.querySelector(h.kok)
-      var cta = kreatif && kreatif.querySelector('.cta')
-      if (!cta) return
-      var parca = 'callToAction=' + encodeURIComponent('Sepete Ekle') +
-        '&checkoutTitle=' + encodeURIComponent(h.baslik) +
-        '&checkoutSubtitle=' + encodeURIComponent(h.altYazi) +
-        '&canonicalWebPageURL=' + encodeURIComponent(kokAdres)
-      var baglanti = document.createElement('a')
-      baglanti.rel = 'ar'
-      baglanti.href = h.usdz + '#' + parca
-      baglanti.style.cssText = 'display:inline-block;position:static;line-height:0'
-      var gorsel = document.createElement('img')
-      gorsel.src = hapSvg(h.g, h.y, h.f, '⌾ Odanda Dene')
-      gorsel.alt = 'Odanda Dene'
-      // Kreatifin genel "img" kuralları (ürün fotoğrafını konumlandıran
-      // absolute/width tanımları) hapı yakalamasın — satır içi stil kazanır.
-      gorsel.style.cssText = 'position:static;transform:none;display:inline-block;' +
-        'width:' + h.g + 'px;height:' + h.y + 'px;left:auto;right:auto;bottom:auto'
-      baglanti.appendChild(gorsel)
-      baglanti.addEventListener('click', function (e) { e.stopPropagation() })
-      cta.parentNode.replaceChild(baglanti, cta)
+
+    function hap(ctx, x, y, w, h, f) {
+      ctx.fillStyle = '#16161a'
+      ctx.beginPath(); ctx.roundRect(x, y, w, h, h / 2); ctx.fill()
+      ctx.fillStyle = '#6ee7a8'
+      ctx.beginPath(); ctx.arc(x + h * 0.55, y + h / 2, 3, 0, 7); ctx.fill()
+      ctx.fillStyle = '#fff'
+      ctx.font = '600 ' + f + 'px -apple-system, Helvetica, sans-serif'
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+      ctx.fillText('⌾ Odanda Dene', x + w / 2 + h * 0.18, y + h / 2 + 1)
+    }
+
+    hedefler.forEach(function (m) {
+      var kreatif = document.querySelector(m.kok)
+      if (!kreatif) return
+      var resim = new Image()
+      resim.src = m.img
+      resim.decode().then(function () {
+        var c = document.createElement('canvas')
+        c.width = m.w * 2; c.height = m.h * 2
+        var ctx = c.getContext('2d')
+        ctx.scale(2, 2)
+        var g = ctx.createLinearGradient(0, 0, m.w, m.h)
+        g.addColorStop(0, '#f4f1ec'); g.addColorStop(1, '#e7e2d9')
+        ctx.fillStyle = g; ctx.fillRect(0, 0, m.w, m.h)
+
+        function marka(x, y, boy, hiza) {
+          ctx.textAlign = hiza; ctx.textBaseline = 'alphabetic'
+          ctx.fillStyle = '#16161a'
+          ctx.font = '300 ' + boy + 'px -apple-system, Helvetica, sans-serif'
+          var m1 = 'E N Z A ', m2 = 'H O M E'
+          if (hiza === 'center') {
+            var t = ctx.measureText(m1).width
+            ctx.font = '700 ' + boy + 'px -apple-system, Helvetica, sans-serif'
+            var t2 = ctx.measureText(m2).width
+            ctx.font = '300 ' + boy + 'px -apple-system, Helvetica, sans-serif'
+            ctx.textAlign = 'left'
+            ctx.fillText(m1, x - (t + t2) / 2, y)
+            ctx.font = '700 ' + boy + 'px -apple-system, Helvetica, sans-serif'
+            ctx.fillText(m2, x - (t + t2) / 2 + t, y)
+          } else {
+            ctx.fillText(m1, x, y)
+            var tk = ctx.measureText(m1).width
+            ctx.font = '700 ' + boy + 'px -apple-system, Helvetica, sans-serif'
+            ctx.fillText(m2, x + tk, y)
+          }
+        }
+
+        var oran = resim.naturalWidth / resim.naturalHeight
+        if (m.tip === 'inter') {
+          marka(160, 34, 11, 'center')
+          ctx.textAlign = 'center'; ctx.fillStyle = '#16161a'
+          ctx.font = '600 24px -apple-system, Helvetica, sans-serif'
+          ctx.fillText(m.baslik, 160, 72)
+          ctx.font = '400 13px -apple-system, Helvetica, sans-serif'; ctx.fillStyle = '#555'
+          ctx.fillText(m.satirlar[0], 160, 100); ctx.fillText(m.satirlar[1], 160, 119)
+          var gw = 280, gh = gw / oran
+          ctx.drawImage(resim, (320 - gw) / 2, 388 - gh, gw, gh)
+          ctx.fillStyle = '#16161a'; ctx.font = '700 15px -apple-system, Helvetica, sans-serif'
+          ctx.fillText(m.alt, 160, 414)
+          hap(ctx, 60, 428, 200, 40, 14)
+        } else if (m.tip === 'kutu') {
+          var gw2 = m.imgW, gh2 = gw2 / oran
+          ctx.drawImage(resim, 300 - gw2 - m.imgSag, 250 - gh2 - m.imgAlt, gw2, gh2)
+          marka(16, 28, 10, 'left'); ctx.textAlign = 'left'
+          ctx.fillStyle = '#16161a'; ctx.font = '600 17px -apple-system, Helvetica, sans-serif'
+          ctx.fillText(m.baslik, 16, 52)
+          ctx.font = '400 11.5px -apple-system, Helvetica, sans-serif'; ctx.fillStyle = '#555'
+          ctx.fillText(m.satirlar[0], 16, 72); ctx.fillText(m.satirlar[1], 16, 88)
+          hap(ctx, 16, 102, 132, 32, 11)
+        } else {
+          var gh3 = 84, gw3 = gh3 * oran
+          ctx.drawImage(resim, 12, 8, gw3, gh3)
+          var tx = 12 + gw3 + 10
+          marka(tx, 24, 10, 'left'); ctx.textAlign = 'left'
+          ctx.fillStyle = '#16161a'; ctx.font = '600 13px -apple-system, Helvetica, sans-serif'
+          ctx.fillText(m.baslik, tx, 42)
+          ctx.font = '400 10px -apple-system, Helvetica, sans-serif'; ctx.fillStyle = '#555'
+          ctx.fillText(m.satirlar[0], tx, 57)
+          hap(ctx, tx, 66, 118, 26, 10)
+        }
+
+        var parca = 'callToAction=' + encodeURIComponent('Sepete Ekle') +
+          '&checkoutTitle=' + encodeURIComponent(m.baslik) +
+          '&checkoutSubtitle=' + encodeURIComponent('Örnek 3D Model') +
+          '&canonicalWebPageURL=' + encodeURIComponent(kokAdres)
+
+        var baglanti = document.createElement('a')
+        baglanti.rel = 'ar'
+        baglanti.className = kreatif.className
+        baglanti.href = m.usdz + '#' + parca
+        var tekGorsel = document.createElement('img')
+        tekGorsel.src = c.toDataURL('image/jpeg', 0.88)
+        tekGorsel.alt = m.baslik + ' — Odanda Dene'
+        tekGorsel.style.cssText = 'position:static;transform:none;display:block;width:100%;height:100%;left:auto;right:auto;bottom:auto'
+        baglanti.appendChild(tekGorsel)
+        kreatif.parentNode.replaceChild(baglanti, kreatif)
+      }).catch(function () { /* görsel çözülmezse kreatif eski haliyle kalır */ })
     })
   }
 </script>

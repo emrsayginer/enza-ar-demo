@@ -90,6 +90,11 @@ export class ArSahne {
       genislikM: urun.genislikMm / 1000,
       yukseklikM: urun.yukseklikMm / 1000,
       derinlikM: urun.derinlikMm / 1000,
+      // Katalog fotoğrafları CEPHEDEN çekilir: gerçek en/boy kutusu doğrudur.
+      // Gerçek 3D ürünlerin posterleri ise AÇILI (3/4) render'dır — onları
+      // cephe kutusuna zorlamak ürünü yamultur. Açılı posterde yükseklik
+      // gerçek tutulur, genişlik görüntünün kendi oranından gelir.
+      perspektifPoster: !!urun.gercek3D,
     }
     this.yuzeyM = yuzeyM
     this.aynala = false
@@ -225,12 +230,14 @@ export class ArSahne {
     const nokta = this.dunyadanEkrana(this.capa.mesafe, this.capa.azimut)
     if (!nokta) return
 
-    // Ürün kutusu doğrudan katalog ölçüsünden çiziliyor: fotoğrafın en/boy
-    // oranı değil, gerçek en ve yükseklik belirleyici. "Gerçek ölçü" iddiasının
-    // karşılığı bu satır.
+    // Cephe fotoğrafında kutu doğrudan katalog ölçüsünden çizilir ("gerçek
+    // ölçü" iddiasının karşılığı). Açılı posterde yükseklik gerçek kalır,
+    // genişlik görüntü oranından türetilir — yamulma olmaz.
     const { x, y, ppm } = nokta
-    const enPx = this.urun.genislikM * ppm
     const boyPx = this.urun.yukseklikM * ppm
+    const enPx = this.urun.perspektifPoster
+      ? boyPx * (this.urun.kesim.en / this.urun.kesim.boy)
+      : this.urun.genislikM * ppm
 
     if (this.olcuModu) this._zeminIzgarasiCiz(ctx)
     this._golgeCiz(ctx, x, y, enPx)
