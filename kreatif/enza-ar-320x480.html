@@ -44,7 +44,7 @@
 <script>
   // clickTag: reklam sunucusu (GAM/Adform vb.) tıklama adresini bu değişkenle
   // enjekte eder; verilmemişse doğrudan kampanya sayfasına gider.
-  var clickTag = window.clickTag || "https://deneme.ink/?urun=DEMO3D";
+  var clickTag = window.clickTag || "https://deneme.ink/uygulama.html?urun=DEMO3D";
   document.getElementById("tik").addEventListener("click", function (e) {
     e.preventDefault();
     window.open(window.clickTag || clickTag, "_blank");

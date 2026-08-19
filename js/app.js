@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '20'
+const SURUM = '21'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -124,7 +124,7 @@ function kampanyaGoster(u, katmanIci = false) {
     // için tam ekrana çıkış ayrı bir bağlantı olarak sunulur.
     kap.innerHTML =
       `<button class="kampanya-buton">⌾ Odanda Dene</button>` +
-      `<div><a class="kampanya-link" href="/?urun=${u.sku}" target="_top">Tam ekranda gerçek AR →</a></div>`
+      `<div><a class="kampanya-link" href="/uygulama.html?urun=${u.sku}" target="_top">Tam ekranda gerçek AR →</a></div>`
     kap.querySelector('button').addEventListener('click', () => {
       $('#kampanya').classList.add('gizli')
       arAc([u], 0)
