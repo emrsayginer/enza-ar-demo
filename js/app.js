@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '23'
+const SURUM = '24'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -104,13 +104,24 @@ async function basla() {
 
   ar = new ArSahne({ tuval: $('#sahne'), video: $('#kamera'), fonGorsel: $('#oda-fonu') })
 
-  // Reklamdan geliş: ?urun=SKU → vitrin yerine tek ürünlük kampanya sayfası.
-  // ?katman=1 → sayfa, genişleyen banner'ın İÇİNDE (iframe) çalışıyor demektir:
-  // kamera deneyimi yerinde (2.5D) yaşatılır, gerçek AR tam ekrana çıkışla verilir.
+  // Reklamdan geliş (?urun=SKU): kullanıcı reklamda "Odanda Dene"ye BASTI —
+  // beklentisi kameranın açılması. Araya ikinci bir buton koymak kabul
+  // edilemez; bu yüzden:
+  //   iOS  : reklamdaki hap zaten doğrudan Quick Look açar; buraya yalnızca
+  //          hap DIŞINA (ürün detayına) dokunan düşer → kampanya kartı doğru.
+  //   Diğer: doğrudan kamera deneyimi (2.5D) açılır, ara ekran yok.
+  //          Gerçek AR'a geçiş, ekrandaki "Odaya Sabitle" ile bir dokunuş.
   const parametreler = new URLSearchParams(location.search)
   const kampanyaSku = parametreler.get('urun')
   const kampanyaUrunu = kampanyaSku && durum.urunler.find((u) => u.sku === kampanyaSku)
-  if (kampanyaUrunu) kampanyaGoster(kampanyaUrunu, parametreler.get('katman') === '1')
+  if (kampanyaUrunu) {
+    const bannerIci = parametreler.get('katman') === '1'
+    if (bannerIci || !iosMu()) {
+      arAc([kampanyaUrunu], 0)
+    } else {
+      kampanyaGoster(kampanyaUrunu)
+    }
+  }
 
   // Sunum sırasında konsoldan ayar denemek için (kamera yüksekliği, görüş açısı vb.)
   window.__demo = { ar, durum }
@@ -121,26 +132,14 @@ async function basla() {
  * iOS'ta "Odanda Dene" gerçek AR linki (tek dokunuş → kamera);
  * diğer platformlarda AR ekranını açar.
  */
-function kampanyaGoster(u, katmanIci = false) {
+function kampanyaGoster(u) {
   $('#kampanya-gorsel').src = u.gorsel
   $('#kampanya-ad').textContent = u.ad
   $('#kampanya-detay').textContent = (u.tur || u.kategori) + ' · ' + olcuYaz(u)
   $('#kampanya-fiyat').textContent = fiyatYaz(u.fiyat)
 
   const kap = $('#kampanya-ar')
-  if (katmanIci) {
-    // Genişleyen banner'ın içindeyiz: kamera deneyimi SAYFADAN ÇIKMADAN
-    // (2.5D motor) yaşatılır — "banner içinden AR" kurgusunun kendisi.
-    // Sistem AR'ı (Quick Look) iframe içinden güvenilir tetiklenemediği
-    // için tam ekrana çıkış ayrı bir bağlantı olarak sunulur.
-    kap.innerHTML =
-      `<button class="kampanya-buton">⌾ Odanda Dene</button>` +
-      `<div><a class="kampanya-link" href="/uygulama.html?urun=${u.sku}" target="_top">Tam ekranda gerçek AR →</a></div>`
-    kap.querySelector('button').addEventListener('click', () => {
-      $('#kampanya').classList.add('gizli')
-      arAc([u], 0)
-    })
-  } else if (iosMu() && u.usdz) {
+  if (iosMu() && u.usdz) {
     kap.innerHTML = `<a rel="ar" href="${quickLookHref(u)}"><img src="${ODANDA_HAPI}" alt="Odanda Dene"></a>`
   } else {
     kap.innerHTML = `<button class="kampanya-buton">⌾ Odanda Dene</button>`
