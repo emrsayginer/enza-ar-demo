@@ -247,10 +247,14 @@
       var baglanti = document.createElement('a')
       baglanti.rel = 'ar'
       baglanti.href = h.usdz + '#' + parca
+      baglanti.style.cssText = 'display:inline-block;position:static;line-height:0'
       var gorsel = document.createElement('img')
       gorsel.src = hapSvg(h.g, h.y, h.f, '⌾ Odanda Dene')
       gorsel.alt = 'Odanda Dene'
-      gorsel.style.display = 'block'
+      // Kreatifin genel "img" kuralları (ürün fotoğrafını konumlandıran
+      // absolute/width tanımları) hapı yakalamasın — satır içi stil kazanır.
+      gorsel.style.cssText = 'position:static;transform:none;display:inline-block;' +
+        'width:' + h.g + 'px;height:' + h.y + 'px;left:auto;right:auto;bottom:auto'
       baglanti.appendChild(gorsel)
       baglanti.addEventListener('click', function (e) { e.stopPropagation() })
       cta.parentNode.replaceChild(baglanti, cta)
