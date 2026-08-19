@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '16'
+const SURUM = '17'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -92,8 +92,40 @@ async function basla() {
 
   ar = new ArSahne({ tuval: $('#sahne'), video: $('#kamera'), fonGorsel: $('#oda-fonu') })
 
+  // Reklamdan geliş: ?urun=SKU → vitrin yerine tek ürünlük kampanya sayfası
+  const kampanyaSku = new URLSearchParams(location.search).get('urun')
+  const kampanyaUrunu = kampanyaSku && durum.urunler.find((u) => u.sku === kampanyaSku)
+  if (kampanyaUrunu) kampanyaGoster(kampanyaUrunu)
+
   // Sunum sırasında konsoldan ayar denemek için (kamera yüksekliği, görüş açısı vb.)
   window.__demo = { ar, durum }
+}
+
+/**
+ * Reklamdan gelinen tek ürünlük kampanya sayfası.
+ * iOS'ta "Odanda Dene" gerçek AR linki (tek dokunuş → kamera);
+ * diğer platformlarda AR ekranını açar.
+ */
+function kampanyaGoster(u) {
+  $('#kampanya-gorsel').src = u.gorsel
+  $('#kampanya-ad').textContent = u.ad
+  $('#kampanya-detay').textContent = (u.tur || u.kategori) + ' · ' + olcuYaz(u)
+  $('#kampanya-fiyat').textContent = fiyatYaz(u.fiyat)
+
+  const kap = $('#kampanya-ar')
+  if (iosMu() && u.usdz) {
+    kap.innerHTML = `<a rel="ar" href="${quickLookHref(u)}"><img src="${ODANDA_HAPI}" alt="Odanda Dene"></a>`
+  } else {
+    kap.innerHTML = `<button class="kampanya-buton">⌾ Odanda Dene</button>`
+    kap.firstElementChild.addEventListener('click', () => {
+      $('#kampanya').classList.add('gizli')
+      arAc([u], 0)
+    })
+  }
+
+  $('#kampanya-vitrin').addEventListener('click', () => $('#kampanya').classList.add('gizli'), { once: true })
+  $('#kampanya').classList.remove('gizli')
+  modeliIsit(u)
 }
 
 // ------------------------------------------------------------------ vitrin
@@ -457,6 +489,16 @@ const KAMERA_HAPI =
     '<svg xmlns="http://www.w3.org/2000/svg" width="176" height="40">' +
     '<rect width="176" height="40" rx="20" fill="#ffffff"/>' +
     '<text x="88" y="25.5" font-family="-apple-system,Helvetica,sans-serif" font-size="13" font-weight="600" fill="#16161a" text-anchor="middle">⌾  Kamerayla Dene</text>' +
+    '</svg>'
+  )
+
+// Kampanya sayfasındaki koyu "Odanda Dene" hapı (beyaz zemin üstüne)
+const ODANDA_HAPI =
+  'data:image/svg+xml;charset=utf-8,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="216" height="52">' +
+    '<rect width="216" height="52" rx="26" fill="#16161a"/>' +
+    '<text x="108" y="32.5" font-family="-apple-system,Helvetica,sans-serif" font-size="15" font-weight="600" fill="#ffffff" text-anchor="middle">⌾  Odanda Dene</text>' +
     '</svg>'
   )
 

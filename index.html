@@ -11,7 +11,7 @@ if (location.protocol === 'http:' && !/^(localhost|127\.|192\.168\.)/.test(locat
   location.replace('https://' + location.host + location.pathname + location.search)
 }
 </script>
-<link rel="stylesheet" href="css/app.css?s=16">
+<link rel="stylesheet" href="css/app.css?s=17">
 </head>
 <body>
 
@@ -27,6 +27,21 @@ if (location.protocol === 'http:' && !/^(localhost|127\.|192\.168\.)/.test(locat
     Sağ üstteki <b>⋯</b> veya paylaş menüsünden <b>“Safari’de Aç”</b> deyin.
     <button id="uyari-kapat" aria-label="Kapat">✕</button>
   </div>
+  <!-- ============ KAMPANYA GİRİŞİ (?urun=SKU — reklamdan gelinen yer) ============
+       Banner'a tıklayan kullanıcı vitrine değil, doğrudan o ürünün AR
+       sayfasına düşer: tek dokunuş kaldı — kamera. -->
+  <div id="kampanya" class="ekran gizli kampanya">
+    <div class="kampanya-govde">
+      <div class="logo">ENZA<span>HOME</span></div>
+      <div class="kampanya-gorsel-kap"><img id="kampanya-gorsel" alt=""></div>
+      <h2 id="kampanya-ad"></h2>
+      <p id="kampanya-detay"></p>
+      <strong id="kampanya-fiyat"></strong>
+      <div id="kampanya-ar"></div>
+      <button id="kampanya-vitrin" class="kampanya-link">Tüm ürünleri gör →</button>
+    </div>
+  </div>
+
   <!-- ===================== UYGULAMA VİTRİNİ ===================== -->
   <div id="vitrin" class="ekran">
     <header class="ust-bar">
@@ -216,6 +231,6 @@ if (location.protocol === 'http:' && !/^(localhost|127\.|192\.168\.)/.test(locat
 </div>
 
 <script src="assets/models/model-viewer.min.js" type="module"></script>
-<script src="js/app.js?s=16" type="module"></script>
+<script src="js/app.js?s=17" type="module"></script>
 </body>
 </html>

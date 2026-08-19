@@ -214,6 +214,30 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 .dip-not { padding: 26px 16px 34px; font-size: 11px; color: var(--gri); line-height: 1.6; }
 
+/* ------------------------------------------------ kampanya girişi */
+
+.kampanya { background: #fff; z-index: 40; overflow-y: auto; }
+.kampanya-govde {
+  min-height: 100%; display: flex; flex-direction: column;
+  align-items: center; text-align: center; padding: 26px 22px 34px; gap: 6px;
+}
+.kampanya .logo { margin-bottom: 10px; }
+.kampanya-gorsel-kap {
+  width: 100%; aspect-ratio: 1/1; background: #f5f5f5; border-radius: 14px;
+  display: grid; place-items: center; margin-bottom: 14px;
+}
+.kampanya-gorsel-kap img { max-width: 88%; max-height: 88%; object-fit: contain; }
+.kampanya h2 { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: .02em; }
+.kampanya p { margin: 2px 0 0; font-size: 13px; color: var(--gri-koyu); line-height: 1.5; }
+.kampanya strong { font-size: 20px; margin: 8px 0 16px; }
+#kampanya-ar a, #kampanya-ar button { display: inline-block; }
+#kampanya-ar img { display: block; height: 52px; }
+.kampanya-buton {
+  background: var(--siyah); color: #fff; padding: 16px 34px;
+  border-radius: 999px; font-size: 15px; font-weight: 600;
+}
+.kampanya-link { margin-top: 16px; font-size: 13px; color: var(--gri-koyu); text-decoration: underline; }
+
 /* ------------------------------------------------ AR ekranı */
 
 #ar { background: #000; }
