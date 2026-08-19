@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="ad.size" content="width=320,height=480">
+<title>Enza Home AR 320x480</title>
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  html, body { width: 320px; height: 480px; overflow: hidden; }
+  a { display: block; position: relative; width: 320px; height: 480px;
+      background: linear-gradient(135deg, #f4f1ec, #e7e2d9);
+      font-family: -apple-system, Helvetica, Arial, sans-serif;
+      color: #16161a; text-decoration: none; }
+  .marka { position: absolute; top: 24px; left: 0; right: 0; text-align: center;
+           font-size: 11px; letter-spacing: .24em; font-weight: 300; }
+  .marka b { font-weight: 700; }
+  h4 { position: absolute; top: 46px; left: 0; right: 0; text-align: center;
+       font-size: 24px; font-weight: 600; }
+  p { position: absolute; top: 80px; left: 20px; right: 20px; text-align: center;
+      font-size: 13px; line-height: 1.5; color: #555; }
+  img { position: absolute; left: 50%; transform: translateX(-50%);
+        bottom: 96px; width: 300px; }
+  .fiyat { position: absolute; left: 0; right: 0; bottom: 78px; text-align: center;
+           font-size: 15px; font-weight: 700; }
+  .cta { position: absolute; left: 50%; transform: translateX(-50%); bottom: 26px;
+         display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+         background: #16161a; color: #fff; border-radius: 999px;
+         font-size: 14px; font-weight: 600; padding: 13px 24px; }
+  .nokta { width: 6px; height: 6px; border-radius: 50%; background: #6ee7a8;
+           animation: n 2s infinite; }
+  @keyframes n { 0%,100% { box-shadow: 0 0 0 0 rgba(110,231,168,.6); }
+                 50% { box-shadow: 0 0 0 7px rgba(110,231,168,0); } }
+</style>
+</head>
+<body>
+<a id="tik" href="#">
+  <div class="marka">ENZA<b>HOME</b></div>
+  <h4>ASTERA Koltuk</h4>
+  <p>Salonuna sığar mı?<br>Satın almadan önce kameranla gör.</p>
+  <img src="https://deneme.ink/assets/products/1432965-1.jpg" alt="ASTERA Koltuk">
+  <div class="fiyat">20.990 TL</div>
+  <span class="cta"><span class="nokta"></span>Odanda Dene — Ücretsiz</span>
+</a>
+<script>
+  // clickTag: reklam sunucusu (GAM/Adform vb.) tıklama adresini bu değişkenle
+  // enjekte eder; verilmemişse doğrudan kampanya sayfasına gider.
+  var clickTag = window.clickTag || "https://deneme.ink/?urun=1432965";
+  document.getElementById("tik").addEventListener("click", function (e) {
+    e.preventDefault();
+    window.open(window.clickTag || clickTag, "_blank");
+  });
+</script>
+</body>
+</html>

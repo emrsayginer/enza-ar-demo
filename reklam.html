@@ -85,6 +85,18 @@
   .inter-etiket { position: absolute; top: -14px; left: 0; }
   .inter-etiket .reklam-etiketi { color: #fff; opacity: .8; }
 
+  /* Genişleyen banner: dokunuşta reklam tam ekrana açılır, AR deneyimi
+     yayıncı sayfasından hiç çıkmadan bu katmanın içinde yaşanır. */
+  .genis-katman { position: fixed; inset: 0; z-index: 200; background: #000; display: none; }
+  .genis-katman.acik { display: block; }
+  .genis-katman iframe { width: 100%; height: 100%; border: 0; }
+  .genis-kapat {
+    position: absolute; top: 14px; right: 14px; z-index: 210;
+    width: 40px; height: 40px; border-radius: 50%; border: 0;
+    background: rgba(255,255,255,.92); font-size: 16px; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,.35);
+  }
+
   .aciklama {
     margin: 26px 0; padding: 14px; border-radius: 10px; background: #eef3ef;
     font: 12.5px/1.6 ui-sans-serif, system-ui, sans-serif; color: #2c4a3c;
@@ -170,9 +182,35 @@
   </div>
 </div>
 
+<!-- Genişleyen banner katmanı: AR deneyimi yayıncı sayfasının içinde -->
+<div class="genis-katman" id="genis">
+  <button class="genis-kapat" id="genis-kapat" aria-label="Reklamı kapat">✕</button>
+</div>
+
 <script>
   document.getElementById('inter-kapat').addEventListener('click', function () {
     document.getElementById('inter').style.display = 'none'
+  })
+
+  // Interstitial'daki dokunuş: sayfadan ÇIKMADAN banner'ı tam ekrana genişlet.
+  // AR deneyimi iframe içinde yaşar; kamera izni iframe'e "allow" ile verilir —
+  // yayıncıyla doğrudan anlaşmalı özel formatın birebir simülasyonu.
+  document.querySelector('.r320x480').addEventListener('click', function (e) {
+    e.preventDefault()
+    var katman = document.getElementById('genis')
+    var cerceve = document.createElement('iframe')
+    cerceve.src = '/?urun=1432965&katman=1'
+    cerceve.setAttribute('allow', 'camera; gyroscope; accelerometer; autoplay; xr-spatial-tracking')
+    katman.appendChild(cerceve)
+    katman.classList.add('acik')
+    document.getElementById('inter').style.display = 'none'
+  })
+
+  document.getElementById('genis-kapat').addEventListener('click', function () {
+    var katman = document.getElementById('genis')
+    katman.classList.remove('acik')
+    var cerceve = katman.querySelector('iframe')
+    if (cerceve) cerceve.remove() // kamera akışını da kapatır
   })
 </script>
 </body>
