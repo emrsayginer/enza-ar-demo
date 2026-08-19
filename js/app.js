@@ -4,10 +4,10 @@
  * Senaryo: kullanıcı ana sayfadaki banner'a dokunur → kamera açılır →
  * ürün gerçek ölçüsüyle odaya yerleşir.
  */
-import { ArSahne } from './ar.js'
+import { ArSahne } from './ar.js?s=26'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '25'
+const SURUM = '26'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -44,8 +44,8 @@ const ODAYA_SABITLE_IMG =
     '</svg>'
   )
 
-import { kesimUret } from './cutout.js'
-import { duzlemGlbUret, gercekArDestekliMi } from './glb.js'
+import { kesimUret } from './cutout.js?s=26'
+import { duzlemGlbUret, gercekArDestekliMi } from './glb.js?s=26'
 
 const $ = (s) => document.querySelector(s)
 const $$ = (s) => [...document.querySelectorAll(s)]
