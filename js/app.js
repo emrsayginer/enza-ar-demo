@@ -7,7 +7,7 @@
 import { ArSahne } from './ar.js'
 // Sürüm damgası: her yayında artırılır. Tüm iç kaynaklar bu damgayla
 // istendiği için telefonlardaki eski önbellek asla yeni sayfayla karışmaz.
-const SURUM = '24'
+const SURUM = '25'
 
 // Ürün kartlarındaki AR rozeti — <a rel=ar> içindeki tek <img> olarak
 // kullanılır, dokunuş Quick Look'u doğrudan kamera modunda açar.
@@ -104,24 +104,15 @@ async function basla() {
 
   ar = new ArSahne({ tuval: $('#sahne'), video: $('#kamera'), fonGorsel: $('#oda-fonu') })
 
-  // Reklamdan geliş (?urun=SKU): kullanıcı reklamda "Odanda Dene"ye BASTI —
-  // beklentisi kameranın açılması. Araya ikinci bir buton koymak kabul
-  // edilemez; bu yüzden:
-  //   iOS  : reklamdaki hap zaten doğrudan Quick Look açar; buraya yalnızca
-  //          hap DIŞINA (ürün detayına) dokunan düşer → kampanya kartı doğru.
-  //   Diğer: doğrudan kamera deneyimi (2.5D) açılır, ara ekran yok.
-  //          Gerçek AR'a geçiş, ekrandaki "Odaya Sabitle" ile bir dokunuş.
+  // Reklamdan geliş (?urun=SKU): KURAL MUTLAK — reklamın neresine basılırsa
+  // basılsın kamera açılır. Ara kart, ikinci buton, detay sayfası YOK.
+  // (iOS'ta reklamdaki hap zaten doğrudan Quick Look açar; gövdeye basan da
+  // burada anında 2.5D kamera deneyimine düşer, gerçek AR'a "Odaya Sabitle"
+  // ile tek dokunuş uzaklıktadır.)
   const parametreler = new URLSearchParams(location.search)
   const kampanyaSku = parametreler.get('urun')
   const kampanyaUrunu = kampanyaSku && durum.urunler.find((u) => u.sku === kampanyaSku)
-  if (kampanyaUrunu) {
-    const bannerIci = parametreler.get('katman') === '1'
-    if (bannerIci || !iosMu()) {
-      arAc([kampanyaUrunu], 0)
-    } else {
-      kampanyaGoster(kampanyaUrunu)
-    }
-  }
+  if (kampanyaUrunu) arAc([kampanyaUrunu], 0)
 
   // Sunum sırasında konsoldan ayar denemek için (kamera yüksekliği, görüş açısı vb.)
   window.__demo = { ar, durum }
